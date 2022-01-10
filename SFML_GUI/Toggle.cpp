@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "Toggle.h"
 
 Toggle::Toggle()

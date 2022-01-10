@@ -2,11 +2,7 @@
 
 #include "Timer.h"
 
-#include "Button.h"
-#include "Toggle.h"
-#include "Slider.h"
-#include "Image.h"
-#include "Dropdown.h"
+#include "GUI.h"
 
 #define VERSION 0.1
 
@@ -29,11 +25,7 @@ class Window
 		sf::Event event;
 		sf::Vector2f mousePos;
 
-		Button buttons = Button();
-		Toggle toggels = Toggle();
-		Slider sliders = Slider();
-		Image images = Image();
-		Dropdown dropdowns = Dropdown();
+		GUI::Button button;
 
 		//TODO: More GUI elements (Image, Dropdown, etc...)
 		//TODO: Save location of GUI elements, editor state
@@ -41,7 +33,6 @@ class Window
 		//TODO: Put draw on different thread
 		//TODO: State system
 		//TODO: Audio system, audio source for 3D sounds
-		//TODO: Use pre-compiled headers
 		//TODO: Make it so you can change the area of the images
 		//TODO:	Zoomable images
 		//TODO: Find a way to change the images

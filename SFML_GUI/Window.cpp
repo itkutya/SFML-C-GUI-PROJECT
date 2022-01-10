@@ -1,10 +1,11 @@
+#include "pch.h"
+
 #include "Window.h"
 
 Window::Window(sf::VideoMode vm, const char* t)
 	            :	videomode(vm), title(t)
 {
 	this->window.create(this->videomode, this->title);
-    //this->window.setVerticalSyncEnabled(true);
     this->window.setFramerateLimit(60);
 
     this->event = sf::Event();
@@ -48,11 +49,7 @@ void Window::draw()
 {
     this->window.clear();
 
-    this->window.draw(this->buttons);
-    this->window.draw(this->toggels);
-    this->window.draw(this->sliders);
-    this->window.draw(this->images);
-    this->window.draw(this->dropdowns);
+    this->window.draw(this->button);
 
     this->window.display();
 }
@@ -61,18 +58,11 @@ void Window::update()
 {
     this->mousePos = this->window.mapPixelToCoords(sf::Mouse::getPosition(this->window));
 
-    this->buttons.update(this->mousePos, this->event);
-    this->toggels.update(this->mousePos, this->event);
-    this->sliders.update(this->mousePos, this->event);
-    this->images.update(this->mousePos, this->event);
-    this->dropdowns.update(this->mousePos, this->event);
+    this->button.update(this->mousePos, this->event);
 
-    this->window.setSize(sf::Vector2u(this->dropdowns.setActiveElement().width, this->dropdowns.setActiveElement().height));
-
-    if (this->buttons.getClicked(0) && !this->toggels.getState(0))
+    if (this->button.onButtonClick(0))
     {
-        std::cout << "Button 0 has been clicked.\n";
-        this->Quit();
+        std::cout << "Button 0 has been pushed!\n";
     }
 
     this->PollEvents();

@@ -1,6 +1,7 @@
+#include "pch.h"
+
 #include "Image.h"
 
-#include <SFML/OpenGL.hpp>
 
 Image::Image()
 {
