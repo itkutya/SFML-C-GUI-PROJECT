@@ -1,0 +1,81 @@
+﻿'SFML_GUI.exe' (Win32): Loaded 'D:\games\SFML_GUI\x64\Debug\SFML_GUI.exe'. Symbols loaded.
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\ntdll.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\kernel32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\KernelBase.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\user32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\win32u.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\gdi32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\gdi32full.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\msvcp_win.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\ucrtbase.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\advapi32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\msvcrt.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\sechost.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\rpcrt4.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\msvcp140d.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\vcruntime140d.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\vcruntime140_1d.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\ucrtbased.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\opengl32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\combase.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\winmm.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\glu32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\imm32.dll'. 
+The thread 0x4b84 has exited with code 0 (0x0).
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\uxtheme.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\msctf.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\oleaut32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\kernel.appcore.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\bcryptprimitives.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\clbcatq.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\AppXDeploymentClient.dll'. 
+'SFML_GUI.exe' (Win32): Unloaded 'C:\Windows\System32\AppXDeploymentClient.dll'
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_0bc9105c62ca22fb\nvoglv64.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\shell32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\setupapi.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\cfgmgr32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\bcrypt.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\ole32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\version.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\wtsapi32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\cryptbase.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\msasn1.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\cryptnet.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\crypt32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\drvstore.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\devobj.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\wldp.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\wintrust.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\ntmarta.dll'. 
+The thread 0x340c has exited with code 0 (0x0).
+The thread 0xfec has exited with code 0 (0x0).
+The thread 0x1784 has exited with code 0 (0x0).
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\windows.storage.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\SHCore.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\shlwapi.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\DXCore.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\nvspcap64.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\profapi.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\dwmapi.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\powrprof.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\umpdc.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\winsta.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\dinput8.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\InputHost.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\CoreMessaging.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\ws2_32.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\WinTypes.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\propsys.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\CoreUIComponents.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\hid.dll'. 
+'SFML_GUI.exe' (Win32): Loaded 'C:\Windows\System32\TextInputFramework.dll'. 
+The thread 0x60a4 has exited with code 0 (0x0).
+The thread 0x4894 has exited with code 0 (0x0).
+The thread 0x3c10 has exited with code 0 (0x0).
+The thread 0x1a84 has exited with code 0 (0x0).
+The thread 0x3068 has exited with code 0 (0x0).
+The thread 0x3124 has exited with code 0 (0x0).
+The thread 0x430c has exited with code 0 (0x0).
+The thread 0x6714 has exited with code 0 (0x0).
+The thread 0x2130 has exited with code 0 (0x0).
+The program '[21532] SFML_GUI.exe' has exited with code 0 (0x0).
