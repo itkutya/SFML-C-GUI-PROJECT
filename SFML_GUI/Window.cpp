@@ -62,8 +62,8 @@ void Window::update()
     this->button.update(this->mousePos, this->event);
     if (this->button.onButtonClick(0))
     {
-        this->clear_screen();
-        std::cout << "Button 0 has been pushed!\nConsol has been erased!\n";
+        std::cout << "Button 0 has been pushed!\nQuiting the application!\n";
+        this->window.close();
     }
 
     bool togglestate = this->toggle.getState(0);
