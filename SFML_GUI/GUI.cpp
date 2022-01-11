@@ -61,20 +61,18 @@ namespace GUI
 					{
 						this->m_texts.push_back(sf::Text(string, this->m_font));
 
-						for (std::size_t i = 0; i < this->m_texts.size(); ++i)
+						this->m_texts[m_count - 1].setFillColor(sf::Color(t_r, t_g, t_b, t_a));
+
+						std::string l = this->m_texts[m_count - 1].getString();
+						std::size_t length = l.length();
+
+						if (length > 0 && length < 25)
 						{
-							this->m_texts[i].setFillColor(sf::Color(t_r, t_g, t_b, t_a));
-
-							std::string l = this->m_texts[i].getString();
-							std::size_t length = l.length();
-
-							if (length > 0 && length < 25)
-							{
-								this->m_texts[i].setCharacterSize((unsigned int)(24 - (length * 0.15)));
-								this->m_texts[i].setPosition(this->m_shapes[m_count - 1].getPosition().x + (this->m_shapes[m_count - 1].getGlobalBounds().width / 2.f) - this->m_texts[i].getGlobalBounds().width / 2.f,
-															this->m_shapes[m_count - 1].getPosition().y + (this->m_shapes[m_count - 1].getGlobalBounds().height / 2.f) - this->m_texts[i].getGlobalBounds().height / 2.f - 5.f);
-							}
+							this->m_texts[m_count - 1].setCharacterSize((unsigned int)(24 - (length * 0.15)));
+							this->m_texts[m_count - 1].setPosition(this->m_shapes[m_count - 1].getPosition().x + (this->m_shapes[m_count - 1].getGlobalBounds().width / 2.f) - this->m_texts[m_count - 1].getGlobalBounds().width / 2.f,
+																	this->m_shapes[m_count - 1].getPosition().y + (this->m_shapes[m_count - 1].getGlobalBounds().height / 2.f) - this->m_texts[m_count - 1].getGlobalBounds().height / 2.f - 5.f);
 						}
+
 					}
 				}
 			}
@@ -197,17 +195,15 @@ namespace GUI
 					{
 						this->m_texts.push_back(sf::Text(string, this->m_font));
 
-						for (std::size_t i = 0; i < this->m_texts.size(); ++i)
-						{
-							this->m_texts[i].setFillColor(sf::Color(t_r, t_g, t_b, t_a));
+						this->m_texts[m_count - 1].setFillColor(sf::Color(t_r, t_g, t_b, t_a));
 
-							std::string l = this->m_texts[i].getString();
-							std::size_t length = l.length();
+						std::string l = this->m_texts[m_count - 1].getString();
+						std::size_t length = l.length();
 
-							this->m_texts[i].setCharacterSize((unsigned int)(24 - (length * 0.15)));
-							this->m_texts[i].setPosition(this->m_shapes[m_count - 1].getPosition().x + (this->m_shapes[m_count - 1].getGlobalBounds().width / 2.f) - this->m_texts[i].getGlobalBounds().width - this->m_shapes[m_count - 1].getGlobalBounds().width,
-														this->m_shapes[m_count - 1].getPosition().y + (this->m_shapes[m_count - 1].getGlobalBounds().height / 2.f) - this->m_texts[i].getGlobalBounds().height / 2.f - 5.f);
-						}
+						this->m_texts[m_count - 1].setCharacterSize((unsigned int)(24 - (length * 0.15)));
+						this->m_texts[m_count - 1].setPosition(this->m_shapes[m_count - 1].getPosition().x + (this->m_shapes[m_count - 1].getGlobalBounds().width / 2.f) - this->m_texts[m_count - 1].getGlobalBounds().width - this->m_shapes[m_count - 1].getGlobalBounds().width,
+															this->m_shapes[m_count - 1].getPosition().y + (this->m_shapes[m_count - 1].getGlobalBounds().height / 2.f) - this->m_texts[m_count - 1].getGlobalBounds().height / 2.f - 5.f);
+
 					}
 				}
 			}
