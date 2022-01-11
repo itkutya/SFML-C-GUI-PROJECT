@@ -50,6 +50,7 @@ void Window::draw()
     this->window.clear();
 
     this->window.draw(this->button);
+    this->window.draw(this->toggle);
 
     this->window.display();
 }
@@ -59,10 +60,16 @@ void Window::update()
     this->mousePos = this->window.mapPixelToCoords(sf::Mouse::getPosition(this->window));
 
     this->button.update(this->mousePos, this->event);
+    this->toggle.update(this->mousePos, this->event);
 
     if (this->button.onButtonClick(0))
     {
-        std::cout << "Button 0 has been pushed!\n";
+        this->clear_screen();
+        std::cout << "Button 0 has been pushed!\nConsol has been erased!\n";
+    }
+    if (this->toggle.getState(0))
+    {
+        std::cout << "Toggle 0 is true!\n";
     }
 
     this->PollEvents();

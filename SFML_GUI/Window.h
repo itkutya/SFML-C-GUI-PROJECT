@@ -26,6 +26,7 @@ class Window
 		sf::Vector2f mousePos;
 
 		GUI::Button button;
+		GUI::Toggle toggle;
 
 		//TODO: More GUI elements (Image, Dropdown, etc...)
 		//TODO: Save location of GUI elements, editor state
@@ -43,4 +44,16 @@ class Window
 		const void PollEvents();
 		const void Quit();
 		const float getVersion();
+
+		//TODO: Delete this later
+		void clear_screen(char fill = ' ') {
+			COORD tl = { 0,0 };
+			CONSOLE_SCREEN_BUFFER_INFO s;
+			HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
+			GetConsoleScreenBufferInfo(console, &s);
+			DWORD written, cells = s.dwSize.X * s.dwSize.Y;
+			FillConsoleOutputCharacter(console, fill, cells, tl, &written);
+			FillConsoleOutputAttribute(console, s.wAttributes, cells, tl, &written);
+			SetConsoleCursorPosition(console, tl);
+		}
 };
