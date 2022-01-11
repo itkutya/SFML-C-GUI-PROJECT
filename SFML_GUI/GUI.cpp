@@ -226,15 +226,15 @@ namespace GUI
 	{
 		for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
 		{
-			if (this->m_shapes[i].getGlobalBounds().contains(mousePos))
+			if (this->m_shapes[i].getGlobalBounds().contains(mousePos) && event.type == sf::Event::MouseButtonPressed)
 			{
-				if (event.type == sf::Event::MouseButtonPressed && !this->m_states[i] && !this->m_pressed)
+				if (!this->m_states[i] && !this->m_pressed)
 				{
 					this->m_shapes[i].setFillColor(sf::Color(this->m_backgrounds[i].r / 3, this->m_backgrounds[i].g / 3, this->m_backgrounds[i].b / 3, this->m_backgrounds[i].a));
 					this->m_states[i] = true;
 					this->m_pressed = true;
 				}
-				else if (event.type == sf::Event::MouseButtonPressed && this->m_states[i] && !this->m_pressed)
+				if (this->m_states[i] && !this->m_pressed)
 				{
 					this->m_shapes[i].setFillColor(this->m_backgrounds[i]);
 					this->m_states[i] = false;
