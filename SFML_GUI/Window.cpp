@@ -85,7 +85,7 @@ void Window::update()
     }
 
     this->slider.update(this->mousePos, this->event);
-    this->toggle.m_shapes[0].setScale(1.f, this->slider.getValue(0));
+    this->toggle.m_shapes[0]->setScale(1.f, this->slider.getValue(0));
 
     this->PollEvents();
 }
