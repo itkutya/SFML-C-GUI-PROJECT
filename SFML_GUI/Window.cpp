@@ -53,6 +53,7 @@ void Window::draw()
 
     this->window.draw(this->button);
     this->window.draw(this->toggle);
+    this->window.draw(this->slider);
 
     this->window.display();
 }
@@ -82,6 +83,9 @@ void Window::update()
         this->toggle.m_pressed = false;
         std::cout << "Toggle 0 is false!\nFullscreen has been turned off!\n";
     }
+
+    this->slider.update(this->mousePos, this->event);
+    this->toggle.m_shapes[0].setScale(1.f, this->slider.getValue(0));
 
     this->PollEvents();
 }

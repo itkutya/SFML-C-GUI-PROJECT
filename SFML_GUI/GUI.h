@@ -16,7 +16,6 @@ namespace GUI
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const = 0;
 	};
-
 	class Button : public Widgets
 	{
 	public:
@@ -29,7 +28,6 @@ namespace GUI
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
-
 	class Toggle : public Widgets
 	{
 	public:
@@ -40,6 +38,23 @@ namespace GUI
 
 		const bool getState(unsigned short int index);
 	private:
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
+	};
+	//Slider
+	class Slider : public Widgets
+	{
+	public:
+		Slider();
+		virtual ~Slider();
+
+		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
+
+		const float getValue(unsigned short int index);
+	private:
+		std::vector<sf::RectangleShape> current_values;
+		std::vector<float> m_values;
+		std::vector<std::string> m_string;
+
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
 }

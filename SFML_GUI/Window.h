@@ -26,6 +26,7 @@ class Window
 
 		GUI::Button button;
 		GUI::Toggle toggle;
+		GUI::Slider slider;
 
 		//TODO: More GUI elements (Image, Dropdown, etc...)
 		//TODO: Save location of GUI elements, editor state
