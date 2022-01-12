@@ -17,7 +17,7 @@ class Window
 		void update();
 		void draw();
 	private:
-		sf::RenderWindow window;
+		std::unique_ptr<sf::RenderWindow> window;
 		sf::VideoMode videomode;
 		const char* title;
 
