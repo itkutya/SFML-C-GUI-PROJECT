@@ -40,7 +40,6 @@ namespace GUI
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
-	//Slider
 	class Slider : public Widgets
 	{
 	public:
