@@ -362,12 +362,12 @@ namespace GUI
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 				{
 					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b, this->m_backgrounds[i]->a));
-					*this->m_values[i] -= 0.001f;
+					*this->m_values[i] -= 0.01f;
 				}
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 				{
 					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b, this->m_backgrounds[i]->a));
-					*this->m_values[i] += 0.001f;
+					*this->m_values[i] += 0.01f;
 				}
 				else if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{

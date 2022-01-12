@@ -74,12 +74,14 @@ void Window::update()
     if (togglestate != this->toggle.getState(0) && this->toggle.getState(0))
     {
         this->window->create(sf::VideoMode::getFullscreenModes()[0], this->title, sf::Style::Fullscreen);
+        this->window->setFramerateLimit(60);
         this->toggle.m_pressed = false;
         std::cout << "Toggle 0 is true!\nFullscreen has been turned on!\n";
     }
     else if (togglestate != this->toggle.getState(0) && !this->toggle.getState(0))
     {
         this->window->create(this->videomode, this->title, sf::Style::Default);
+        this->window->setFramerateLimit(60);
         this->toggle.m_pressed = false;
         std::cout << "Toggle 0 is false!\nFullscreen has been turned off!\n";
     }
