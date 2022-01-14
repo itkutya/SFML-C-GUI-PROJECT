@@ -2,6 +2,11 @@
 
 namespace GUI
 {
+	struct Color
+	{
+		int r = 0, g = 0, b = 0, a = 0;
+	};
+	/*-----------------------------------------Main class---------------------------------------------------------*/
 	class Widgets : public sf::Drawable, public sf::Transformable
 	{
 	public:
@@ -16,6 +21,7 @@ namespace GUI
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const = 0;
 	};
+	/*-------------------------------------------Button---------------------------------------------------------*/
 	class Button : public Widgets
 	{
 	public:
@@ -28,6 +34,7 @@ namespace GUI
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
+	/*-----------------------------------------Toggle---------------------------------------------------------*/
 	class Toggle : public Widgets
 	{
 	public:
@@ -40,6 +47,7 @@ namespace GUI
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
+	/*-----------------------------------------Slider---------------------------------------------------------*/
 	class Slider : public Widgets
 	{
 	public:
@@ -56,4 +64,34 @@ namespace GUI
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
+	/*----------------------------------------Dropwdown-------------------------------------------------------*/
+	class Dropdown : public Widgets
+	{
+	public:
+		Dropdown(std::vector<std::string>& list);
+		virtual ~Dropdown();
+
+		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
+		void update(const sf::Vector2f& mousePos, sf::Event& event, std::vector<std::string>& list);
+
+		const int getActiveElement();
+	private:
+		std::vector<std::unique_ptr<sf::Text>> active_text;
+		std::vector<std::unique_ptr<sf::RectangleShape>> m_elements;
+		std::vector<std::unique_ptr<sf::Color>> backgrounds;
+		std::vector<std::unique_ptr<sf::Text>> m_options;
+		int active_element = 0;
+		bool show_list = false;
+
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
+	};
+
+
 }
+
+/*
+sf::VideoMode Dropdown::setActiveElement()
+{
+	return this->modes[this->active_element];
+}
+*/

@@ -4,7 +4,7 @@
 
 int main()
 {
-    Window window(sf::VideoMode(800, 600), "SFML GUI");
+    Window window("SFML GUI");
 
     try 
     {

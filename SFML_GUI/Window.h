@@ -9,7 +9,7 @@
 class Window
 {
 	public:
-		Window(sf::VideoMode vm = sf::VideoMode(600, 600), const char* t = "Default title.");
+		Window(const char* t = "Default title.");
 		virtual ~Window();
 
 		bool IsOpen();
@@ -18,7 +18,6 @@ class Window
 		void draw();
 	private:
 		std::unique_ptr<sf::RenderWindow> window;
-		sf::VideoMode videomode;
 		const char* title;
 
 		sf::Event event;
@@ -27,6 +26,10 @@ class Window
 		GUI::Button button;
 		GUI::Toggle toggle;
 		GUI::Slider slider;
+
+		std::vector<sf::VideoMode> modes;
+		std::vector<std::string> string;
+		GUI::Dropdown* dropdown;
 
 		//TODO: More GUI elements (Image, Dropdown, etc...)
 		//TODO: Save location of GUI elements, editor state

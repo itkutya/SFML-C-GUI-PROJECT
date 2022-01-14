@@ -2,10 +2,16 @@
 
 #include "Window.h"
 
-Window::Window(sf::VideoMode vm, const char* t)
-	            :	videomode(vm), title(t)
+Window::Window(const char* t) : title(t)
 {
-    this->window = std::make_unique<sf::RenderWindow>(this->videomode, this->title);
+    this->modes = sf::VideoMode::getFullscreenModes();
+    for (std::size_t i = 0; i < modes.size(); ++i)
+    {
+        this->string.push_back(std::to_string(modes[i].width) + "x" + std::to_string(modes[i].height));
+    }
+    this->dropdown = new GUI::Dropdown(this->string);
+
+    this->window = std::make_unique<sf::RenderWindow>(this->modes[this->dropdown->getActiveElement()], this->title);
     this->window->setFramerateLimit(60);
 
     this->event = sf::Event();
@@ -19,11 +25,12 @@ Window::Window(sf::VideoMode vm, const char* t)
     {
         std::cout << "You are up to date!\n";
     }
+
 }
 
 Window::~Window()
 {
-
+    delete this->dropdown;
 }
 
 bool Window::IsOpen()
@@ -55,6 +62,8 @@ void Window::draw()
     this->window->draw(this->toggle);
     this->window->draw(this->slider);
 
+    this->window->draw(*this->dropdown);
+
     this->window->display();
 }
 
@@ -73,14 +82,14 @@ void Window::update()
     this->toggle.update(this->mousePos, this->event);
     if (togglestate != this->toggle.getState(0) && this->toggle.getState(0))
     {
-        this->window->create(sf::VideoMode::getFullscreenModes()[0], this->title, sf::Style::Fullscreen);
+        this->window->create(this->modes[this->dropdown->getActiveElement()], this->title, sf::Style::Fullscreen);
         this->window->setFramerateLimit(60);
         this->toggle.m_pressed = false;
         std::cout << "Toggle 0 is true!\nFullscreen has been turned on!\n";
     }
     else if (togglestate != this->toggle.getState(0) && !this->toggle.getState(0))
     {
-        this->window->create(this->videomode, this->title, sf::Style::Default);
+        this->window->create(this->modes[this->dropdown->getActiveElement()], this->title, sf::Style::Default);
         this->window->setFramerateLimit(60);
         this->toggle.m_pressed = false;
         std::cout << "Toggle 0 is false!\nFullscreen has been turned off!\n";
@@ -88,6 +97,24 @@ void Window::update()
 
     this->slider.update(this->mousePos, this->event);
     this->toggle.m_shapes[0]->setScale(1.f, this->slider.getValue(0));
+
+    int active = this->dropdown->getActiveElement();
+    this->dropdown->update(this->mousePos, this->event, this->string);
+    if (active != this->dropdown->getActiveElement())
+    {
+        if (this->toggle.getState(0))
+        {
+            std::cout << "Window resized to: " << this->string[this->dropdown->getActiveElement()] << "\n";
+            this->window->create(this->modes[this->dropdown->getActiveElement()], this->title, sf::Style::Fullscreen);
+            this->window->setFramerateLimit(60);
+        }
+        if (!this->toggle.getState(0))
+        {
+            std::cout << "Window resized to: " << this->string[this->dropdown->getActiveElement()] << "\n";
+            this->window->create(this->modes[this->dropdown->getActiveElement()], this->title, sf::Style::Default);
+            this->window->setFramerateLimit(60);
+        }
+    }
 
     this->PollEvents();
 }
