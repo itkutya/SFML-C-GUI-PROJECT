@@ -11,7 +11,8 @@ Window::Window(const char* t) : title(t)
     }
     this->dropdown = new GUI::Dropdown(this->string);
 
-    this->window = std::make_unique<sf::RenderWindow>(this->modes[this->dropdown->getActiveElement()], this->title);
+    this->window = std::make_unique<sf::RenderWindow>();
+    this->window->create(this->modes[this->dropdown->getActiveElement()], this->title, sf::Style::Default);
     this->window->setFramerateLimit(60);
 
     this->event = sf::Event();

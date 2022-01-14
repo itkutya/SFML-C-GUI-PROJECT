@@ -624,12 +624,12 @@ namespace GUI
 				{
 					for (std::size_t i = 0; i < this->m_elements.size(); ++i)
 					{
-						if (this->m_elements[i]->getPosition().y < this->m_shapes[0]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height * 6)
-							&& this->m_elements[i]->getPosition().y > this->m_shapes[0]->getPosition().y + this->m_shapes[0]->getGlobalBounds().height)
-						{
+						//if (this->m_elements[i]->getPosition().y < this->m_shapes[0]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height * 6)
+						//	&& this->m_elements[i]->getPosition().y > this->m_shapes[0]->getPosition().y + this->m_shapes[0]->getGlobalBounds().height)
+						//{
 							target.draw(*this->m_elements[i], states);
 							target.draw(*this->m_options[i], states);
-						}
+						//}
 					}
 				}
 			}

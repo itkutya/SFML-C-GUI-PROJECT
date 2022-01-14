@@ -85,13 +85,4 @@ namespace GUI
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
-
-
 }
-
-/*
-sf::VideoMode Dropdown::setActiveElement()
-{
-	return this->modes[this->active_element];
-}
-*/
