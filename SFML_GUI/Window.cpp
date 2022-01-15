@@ -47,6 +47,19 @@ const void Window::PollEvents()
         {
             this->window->close();
         }
+        else if (event.type == sf::Event::MouseWheelMoved)
+        {
+            if (event.mouseWheel.delta > 0)
+            {
+                this->dropdown->scrool = 1;
+                std::cout << "Scrolling up!\n";
+            }
+            else if (event.mouseWheel.delta < 0)
+            {
+                this->dropdown->scrool = -1;
+                std::cout << "Scrolling down!\n";
+            }
+        }
     }
 }
 
@@ -100,7 +113,7 @@ void Window::update()
     this->toggle.m_shapes[0]->setScale(1.f, this->slider.getValue(0));
 
     int active = this->dropdown->getActiveElement();
-    this->dropdown->update(this->mousePos, this->event, this->string);
+    this->dropdown->update(this->mousePos, this->event);
     if (active != this->dropdown->getActiveElement())
     {
         if (this->toggle.getState(0))

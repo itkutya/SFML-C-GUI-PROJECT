@@ -72,14 +72,16 @@ namespace GUI
 		virtual ~Dropdown();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
-		void update(const sf::Vector2f& mousePos, sf::Event& event, std::vector<std::string>& list);
 
 		const int getActiveElement();
+
+		short int scrool = 0;
 	private:
 		std::vector<std::unique_ptr<sf::Text>> active_text;
 		std::vector<std::unique_ptr<sf::RectangleShape>> m_elements;
 		std::vector<std::unique_ptr<sf::Color>> backgrounds;
 		std::vector<std::unique_ptr<sf::Text>> m_options;
+		std::vector<std::unique_ptr<std::string>> m_list;
 		int active_element = 0;
 		bool show_list = false;
 

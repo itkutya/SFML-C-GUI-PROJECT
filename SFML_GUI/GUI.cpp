@@ -461,7 +461,11 @@ namespace GUI
 					this->m_shapes[m_count - 1]->setOutlineThickness(2.f);
 					this->m_shapes[m_count - 1]->setOutlineColor(sf::Color(255, 255, 255, color.a));
 
-					this->active_text.emplace_back(std::make_unique<sf::Text>(list[this->active_element], this->m_font));
+					for (std::size_t i = 0; i < list.size(); ++i)
+					{
+						this->m_list.emplace_back(std::make_unique<std::string>(list[i]));
+					}
+					this->active_text.emplace_back(std::make_unique<sf::Text>(*this->m_list[this->active_element], this->m_font));
 
 					std::string al = this->active_text[m_count - 1]->getString();
 					std::size_t alength = al.length();
@@ -524,13 +528,9 @@ namespace GUI
 	}
 	void Dropdown::update(const sf::Vector2f& mousePos, sf::Event& event)
 	{
-
-	}
-	void Dropdown::update(const sf::Vector2f& mousePos, sf::Event& event, std::vector<std::string>& list)
-	{
 		for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
 		{
-			this->active_text[i]->setString(list[this->active_element]);
+			this->active_text[i]->setString(*this->m_list[this->active_element]);
 
 			if (this->m_shapes[i]->getGlobalBounds().contains(mousePos))
 			{
@@ -547,7 +547,6 @@ namespace GUI
 					this->m_pressed = true;
 					this->show_list = false;
 				}
-
 			}
 			else
 			{
@@ -560,11 +559,11 @@ namespace GUI
 			}
 		}
 
-		if (list.size() > 0)
+		if (this->m_list.size() > 0)
 		{
 			if (this->show_list)
 			{
-				for (std::size_t i = 0; i < list.size(); ++i)
+				for (std::size_t i = 0; i < this->m_list.size(); ++i)
 				{
 					if (this->m_elements[i]->getGlobalBounds().contains(mousePos))
 					{
@@ -585,11 +584,37 @@ namespace GUI
 					{
 						this->m_elements[i]->setPosition(this->m_elements[i]->getPosition().x, this->m_elements[i]->getPosition().y + 15.f);
 						this->m_options[i]->setPosition(this->m_elements[i]->getPosition().x + (this->m_elements[i]->getGlobalBounds().width / 2.f) - this->m_options[i]->getGlobalBounds().width / 2.f,
-														this->m_elements[i]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height / 2.f) - this->m_options[i]->getGlobalBounds().height / 2.f - 5.f);
+							this->m_elements[i]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height / 2.f) - this->m_options[i]->getGlobalBounds().height / 2.f - 5.f);
 					}
 					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 					{
 						this->m_elements[i]->setPosition(this->m_elements[i]->getPosition().x, this->m_elements[i]->getPosition().y - 15.f);
+						this->m_options[i]->setPosition(this->m_elements[i]->getPosition().x + (this->m_elements[i]->getGlobalBounds().width / 2.f) - this->m_options[i]->getGlobalBounds().width / 2.f,
+							this->m_elements[i]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height / 2.f) - this->m_options[i]->getGlobalBounds().height / 2.f - 5.f);
+					}
+
+					if (i == 0)
+					{
+						if (this->scrool > 0)
+						{
+							this->m_elements[0]->setPosition(this->m_elements[0]->getPosition().x, this->m_elements[0]->getPosition().y + 15.f);
+							this->m_options[0]->setPosition(this->m_elements[0]->getPosition().x + (this->m_elements[0]->getGlobalBounds().width / 2.f) - this->m_options[0]->getGlobalBounds().width / 2.f,
+															this->m_elements[0]->getPosition().y + (this->m_elements[0]->getGlobalBounds().height / 2.f) - this->m_options[0]->getGlobalBounds().height / 2.f - 5.f);
+
+							this->scrool = 0;
+						}
+						else if (this->scrool < 0)
+						{
+							this->m_elements[0]->setPosition(this->m_elements[0]->getPosition().x, this->m_elements[0]->getPosition().y - 15.f);
+							this->m_options[0]->setPosition(this->m_elements[0]->getPosition().x + (this->m_elements[0]->getGlobalBounds().width / 2.f) - this->m_options[0]->getGlobalBounds().width / 2.f,
+															this->m_elements[0]->getPosition().y + (this->m_elements[0]->getGlobalBounds().height / 2.f) - this->m_options[0]->getGlobalBounds().height / 2.f - 5.f);
+
+							this->scrool = 0;
+						}
+					}
+					else
+					{
+						this->m_elements[i]->setPosition(sf::Vector2f(this->m_elements[0]->getPosition().x, this->m_elements[0]->getPosition().y + (i * this->m_elements[0]->getGlobalBounds().height)));
 						this->m_options[i]->setPosition(this->m_elements[i]->getPosition().x + (this->m_elements[i]->getGlobalBounds().width / 2.f) - this->m_options[i]->getGlobalBounds().width / 2.f,
 														this->m_elements[i]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height / 2.f) - this->m_options[i]->getGlobalBounds().height / 2.f - 5.f);
 					}
@@ -624,12 +649,8 @@ namespace GUI
 				{
 					for (std::size_t i = 0; i < this->m_elements.size(); ++i)
 					{
-						//if (this->m_elements[i]->getPosition().y < this->m_shapes[0]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height * 6)
-						//	&& this->m_elements[i]->getPosition().y > this->m_shapes[0]->getPosition().y + this->m_shapes[0]->getGlobalBounds().height)
-						//{
-							target.draw(*this->m_elements[i], states);
-							target.draw(*this->m_options[i], states);
-						//}
+						target.draw(*this->m_elements[i], states);
+						target.draw(*this->m_options[i], states);
 					}
 				}
 			}
