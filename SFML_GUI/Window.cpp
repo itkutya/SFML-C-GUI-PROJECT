@@ -26,7 +26,6 @@ Window::Window(const char* t) : title(t)
     {
         std::cout << "You are up to date!\n";
     }
-
 }
 
 Window::~Window()

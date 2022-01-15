@@ -215,13 +215,13 @@ namespace GUI
 				if (!(*this->m_states[i]) && !this->m_pressed)
 				{
 					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b / 3, this->m_backgrounds[i]->a));
-					(* this->m_states[i]) = true;
+					(*this->m_states[i]) = true;
 					this->m_pressed = true;
 				}
-				if ((*this->m_states[i]) && !this->m_pressed)
+				else if ((*this->m_states[i]) && !this->m_pressed)
 				{
 					this->m_shapes[i]->setFillColor(*this->m_backgrounds[i]);
-					(* this->m_states[i]) = false;
+					(*this->m_states[i]) = false;
 					this->m_pressed = true;
 				}
 			}
