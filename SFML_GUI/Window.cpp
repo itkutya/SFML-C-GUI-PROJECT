@@ -74,6 +74,7 @@ void Window::draw()
     this->window->draw(this->button);
     this->window->draw(this->toggle);
     this->window->draw(this->slider);
+    this->window->draw(this->image);
 
     this->window->draw(*this->dropdown);
 
@@ -128,6 +129,8 @@ void Window::update()
             this->window->setFramerateLimit(60);
         }
     }
+
+    this->image.update(this->mousePos, this->event);
 
     this->PollEvents();
 }

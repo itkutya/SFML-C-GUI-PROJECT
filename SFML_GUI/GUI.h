@@ -87,4 +87,18 @@ namespace GUI
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
+	/*-------------------------------------------Image--------------------------------------------------------*/
+	class Image : public Widgets
+	{
+	public:
+		Image();
+		virtual ~Image();
+
+		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
+
+	private:
+		std::vector<std::unique_ptr<sf::Texture>> m_textures;
+
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
+	};
 }

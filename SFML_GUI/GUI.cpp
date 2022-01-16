@@ -664,4 +664,72 @@ namespace GUI
 			}
 		}
 	}
+	//Image
+	Image::Image()
+	{
+		std::fstream file("resources/gui.txt");
+		if (!file.good())
+		{
+			std::ofstream outfile("resources/gui.txt");
+			outfile << "Reqierd data about entities are missing!";
+			outfile.close();
+			throw std::runtime_error("Restart requierd!");
+		}
+		file.close();
+
+		std::ifstream data;
+		data.open("resources/gui.txt");
+		if (data.is_open())
+		{
+			unsigned short int m_count = 0;
+			std::string type = "";
+			std::string path = "";
+			sf::IntRect area;
+			sf::Vector2f size;
+			sf::Vector2f position;
+
+			while (data >> type)
+			{
+				if (type == "IMAGE")
+				{
+					m_count++;
+
+					data >> path >> area.left >> area.top >> area.width >> area.height >> size.x >> size.y >> position.x >> position.y;
+					
+					this->m_shapes.emplace_back(std::make_unique<sf::RectangleShape>(size));
+					this->m_shapes[m_count - 1]->setPosition(position);
+					this->m_shapes[m_count - 1]->setOutlineThickness(2.f);
+					this->m_shapes[m_count - 1]->setOutlineColor(sf::Color(255, 255, 255, 255));
+
+					this->m_textures.emplace_back(std::make_unique<sf::Texture>());
+
+					this->m_textures[m_count - 1]->loadFromFile(path, area);
+					this->m_shapes[m_count - 1]->setTexture(&(*this->m_textures[m_count - 1]));
+				}
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Cannot open data file.");
+		}
+		data.close();
+	}
+	Image::~Image()
+	{
+
+	}
+	void Image::update(const sf::Vector2f& mousePos, sf::Event& event)
+	{
+
+	}
+	void Image::draw(sf::RenderTarget& target, sf::RenderStates states) const
+	{
+		states.transform *= getTransform();
+
+		for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
+		{
+			states.texture = &(*this->m_textures[i]);
+			target.draw(*this->m_shapes[i], states);
+		}
+	}
 }

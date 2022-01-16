@@ -26,6 +26,7 @@ class Window
 		GUI::Button button;
 		GUI::Toggle toggle;
 		GUI::Slider slider;
+		GUI::Image image;
 
 		std::vector<sf::VideoMode> modes;
 		std::vector<std::string> string;
