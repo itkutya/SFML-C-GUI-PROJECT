@@ -732,4 +732,17 @@ namespace GUI
 			target.draw(*this->m_shapes[i], states);
 		}
 	}
+	//Panel
+	Panel::Panel()
+	{
+	}
+	Panel::~Panel()
+	{
+	}
+	void Panel::update(const sf::Vector2f& mousePos, sf::Event& event)
+	{
+	}
+	void Panel::draw(sf::RenderTarget& target, sf::RenderStates states) const
+	{
+	}
 }
