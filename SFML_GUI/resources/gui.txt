@@ -7,13 +7,21 @@ Quit
 0 0 100 255
 255 255 255 255
 
+BUTTON
+Quit2
+200 50
+200 200
+0 0 100 255
+255 255 255 255
+
 TOGGLE
 Fullscreen
 0
 50 50
-200 200
+600 300
 255 255 255 255
 0 255 0 255
+---------------
 
 SLIDER
 Volume
@@ -22,6 +30,7 @@ Volume
 450 125
 255 255 255 255
 0 0 255 255
+---------------
 
 DROPDOWN
 Resolution
@@ -31,6 +40,7 @@ Resolution
 255 255 255 255
 
 IMAGE
+Profile
 resources/image.png
 1400 500 1000 1200
 100 100

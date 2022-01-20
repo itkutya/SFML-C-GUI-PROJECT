@@ -12,12 +12,14 @@ namespace GUI
 	public:
 		virtual void update(const sf::Vector2f& mousePos, sf::Event& event) = 0;
 
-		std::vector<std::unique_ptr<sf::RectangleShape>> m_shapes;
-		std::vector<std::unique_ptr<sf::Color>> m_backgrounds;
-		std::vector<std::unique_ptr<sf::Text>> m_texts;
-		std::vector<std::unique_ptr<bool>> m_states;
-		bool m_pressed = false;
-		sf::Font m_font;
+		std::unique_ptr<sf::RectangleShape> m_shape;
+		std::unique_ptr<sf::Color> m_background;
+		std::unique_ptr<sf::Text> m_text;
+		std::unique_ptr<bool> m_state;
+		std::unique_ptr<bool> m_pressed;
+		std::unique_ptr<sf::Font> m_font;
+
+		short int scrool = 0;
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const = 0;
 	};
@@ -25,12 +27,12 @@ namespace GUI
 	class Button : public Widgets
 	{
 	public:
-		Button();
+		Button(const char* name = "-");
 		virtual ~Button();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
 
-		const bool onButtonClick(unsigned short int index);
+		const bool onButtonClick();
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
@@ -38,12 +40,12 @@ namespace GUI
 	class Toggle : public Widgets
 	{
 	public:
-		Toggle();
+		Toggle(const char* name = "-");
 		virtual ~Toggle();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
 
-		const bool getState(unsigned short int index);
+		const bool getState();
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
@@ -51,16 +53,16 @@ namespace GUI
 	class Slider : public Widgets
 	{
 	public:
-		Slider();
+		Slider(const char* name = "-");
 		virtual ~Slider();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
 
-		const float getValue(unsigned short int index);
+		const float getValue();
 	private:
-		std::vector<std::unique_ptr<sf::RectangleShape>> current_values;
-		std::vector<std::unique_ptr<float>> m_values;
-		std::vector<std::unique_ptr<std::string>> m_string;
+		std::unique_ptr<sf::RectangleShape> c_shape;
+		std::unique_ptr<float> c_value;
+		std::unique_ptr<std::string> c_string;
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
@@ -68,22 +70,21 @@ namespace GUI
 	class Dropdown : public Widgets
 	{
 	public:
-		Dropdown(std::vector<std::string>& list);
+		Dropdown(std::vector<std::string>& list, const char* name = "-");
 		virtual ~Dropdown();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
 
 		const int getActiveElement();
-
-		short int scrool = 0;
 	private:
-		std::vector<std::unique_ptr<sf::Text>> active_text;
-		std::vector<std::unique_ptr<sf::RectangleShape>> m_elements;
-		std::vector<std::unique_ptr<sf::Color>> backgrounds;
-		std::vector<std::unique_ptr<sf::Text>> m_options;
-		std::vector<std::unique_ptr<std::string>> m_list;
-		int active_element = 0;
-		bool show_list = false;
+		std::unique_ptr<sf::Text> a_text;
+		std::unique_ptr<int> a_element;
+		std::unique_ptr<bool> show_list;
+
+		std::vector<std::unique_ptr<sf::RectangleShape>> c_elements;
+		std::vector<std::unique_ptr<sf::Color>> c_backgrounds;
+		std::vector<std::unique_ptr<sf::Text>> c_options;
+		std::vector<std::unique_ptr<std::string>> c_list;
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
@@ -91,27 +92,56 @@ namespace GUI
 	class Image : public Widgets
 	{
 	public:
-		Image();
+		Image(const char* name = "-");
 		virtual ~Image();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
-
 	private:
-		std::vector<std::unique_ptr<sf::Texture>> m_textures;
+		std::unique_ptr<sf::Texture> m_texture;
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
 	/*-------------------------------------------Panel--------------------------------------------------------*/
 	class Panel : public Widgets
 	{
-		Panel();
+	public:
+		Panel(const char* name = "-");
 		virtual ~Panel();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
-
 	private:
-		std::vector<std::unique_ptr<sf::Texture>> m_textures;
+		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
+	};
+	/*-------------------------------------------Menu--------------------------------------------------------*/
+	class Menu : public sf::Drawable, public sf::Transformable
+	{
+	public:
+		Menu();
+		virtual ~Menu();
 
+		std::vector<std::unique_ptr<Button>> buttons;
+		std::vector<std::unique_ptr<Toggle>> toggles;
+		std::vector<std::unique_ptr<Slider>> sliders;
+		std::vector<std::unique_ptr<Dropdown>> dropdowns;
+		std::vector<std::unique_ptr<Image>> images;
+		std::vector<std::unique_ptr<Panel>> panels;
+
+		void update(const sf::Vector2f& mousePos, sf::Event& event);
+
+		const float getVersion();
+
+		void CreateButton(const char* name = "-");
+		void CreateToggle(const char* name = "-");
+		void CreateSlider(const char* name = "-");
+		void CreateDropdown(std::vector<std::string>& list, const char* name = "-");
+		void CreateImage(const char* name = "-");
+		void CreatePanel(const char* name = "-");
+
+		const bool onButtonClick(const char* name);
+		const int getActiveElement(const char* name);
+		const float getValue(const char* name);
+		const bool getState(const char* name);
+	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
 }

@@ -5,28 +5,17 @@
 namespace GUI
 {
 	//Button
-	Button::Button()
+	Button::Button(const char* name)
 	{
-		if (!this->m_font.loadFromFile("resources/sansation.ttf"))
+		this->m_font = std::make_unique<sf::Font>();
+		if (!this->m_font->loadFromFile("resources/sansation.ttf"))
 		{
 			throw std::runtime_error("Failed to find font!");
 		}
 
 		std::fstream file("resources/gui.txt");
-		if (!file.good())
+		if (file.is_open())
 		{
-			std::ofstream outfile("resources/gui.txt");
-			outfile << "Reqierd data about entities are missing!";
-			outfile.close();
-			throw std::runtime_error("Restart requierd!");
-		}
-		file.close();
-
-		std::ifstream data;
-		data.open("resources/gui.txt");
-		if (data.is_open())
-		{
-			unsigned short int m_count = 0;
 			std::string type = "";
 			std::string string = "";
 			sf::Vector2f size;
@@ -34,126 +23,104 @@ namespace GUI
 			Color color;
 			Color text_color;
 
-			while (data >> type)
+			while (file >> type >> string)
 			{
-				if (type == "BUTTON")
+				if (type == "BUTTON" && string == name)
 				{
-					m_count++;
+					file >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
 
-					data >> string >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
+					this->m_shape = std::make_unique<sf::RectangleShape>(size);
+					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+					this->m_state = std::make_unique<bool>(false);
+					this->m_pressed = std::make_unique<bool>(false);
 
-					this->m_shapes.emplace_back(std::make_unique<sf::RectangleShape>(size));
-					this->m_backgrounds.emplace_back(std::make_unique<sf::Color>(color.r, color.g, color.b, color.a));
-					this->m_states.emplace_back(std::make_unique<bool>(false));
-
-					this->m_shapes[m_count - 1]->setPosition(position);
-					this->m_shapes[m_count - 1]->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-					this->m_shapes[m_count - 1]->setOutlineThickness(2.f);
-					this->m_shapes[m_count - 1]->setOutlineColor(sf::Color(255, 255, 255, color.a));
+					this->m_shape->setPosition(position);
+					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+					this->m_shape->setOutlineThickness(2.f);
+					this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
 
 					if (string != "-")
 					{
-						this->m_texts.emplace_back(std::make_unique<sf::Text>(string, this->m_font));
+						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
 
-						this->m_texts[m_count - 1]->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+						this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
 
-						std::string l = this->m_texts[m_count - 1]->getString();
+						std::string l = this->m_text->getString();
 						std::size_t length = l.length();
 
 						if (length > 0 && length < 25)
 						{
-							this->m_texts[m_count - 1]->setCharacterSize((unsigned int)(24 - (length * 0.15)));
-							this->m_texts[m_count - 1]->setPosition(this->m_shapes[m_count - 1]->getPosition().x + (this->m_shapes[m_count - 1]->getGlobalBounds().width / 2.f) - this->m_texts[m_count - 1]->getGlobalBounds().width / 2.f,
-																	this->m_shapes[m_count - 1]->getPosition().y + (this->m_shapes[m_count - 1]->getGlobalBounds().height / 2.f) - this->m_texts[m_count - 1]->getGlobalBounds().height / 2.f - 5.f);
+							this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width / 2.f,
+													  this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
 						}
-
 					}
 				}
 			}
 		}
 		else
 		{
-			throw std::runtime_error("Cannot open data file.");
+			throw std::runtime_error("Cannot open the file.");
 		}
-		data.close();
+		file.close();
 	}
 	Button::~Button()
 	{
-
 	}
 	void Button::update(const sf::Vector2f& mousePos, sf::Event& event)
 	{
-		for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
+		if (this->m_shape != nullptr)
 		{
-			(* this->m_states[i]) = false;
-			if (this->m_shapes[i]->getGlobalBounds().contains(mousePos))
+			(*this->m_state) = false;
+			if (this->m_shape->getGlobalBounds().contains(mousePos))
 			{
-				this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 2, this->m_backgrounds[i]->g / 2, this->m_backgrounds[i]->b / 2, this->m_backgrounds[i]->a));
-				if (event.type == sf::Event::MouseButtonPressed && !this->m_pressed)
+				this->m_shape->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
+				if (event.type == sf::Event::MouseButtonPressed && !(*this->m_pressed))
 				{
-					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b / 3, this->m_backgrounds[i]->a));
-					(* this->m_states[i]) = true;
-					this->m_pressed = true;
+					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
+					(*this->m_state) = true;
+					(*this->m_pressed) = true;
 				}
 			}
 			else
 			{
-				this->m_shapes[i]->setFillColor(*this->m_backgrounds[i]);
+				this->m_shape->setFillColor(*this->m_background);
+			}
+
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				(*this->m_pressed) = false;
 			}
 		}
-
-		if (event.type == sf::Event::MouseButtonReleased)
-		{
-			this->m_pressed = false;
-		}
 	}
-	const bool Button::onButtonClick(unsigned short int index)
+	const bool Button::onButtonClick()
 	{
-		return (*this->m_states[index]);
+		return (*this->m_state);
 	}
 	void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
 
-		if (this->m_shapes.size() > 0)
+		if (this->m_shape != nullptr)
 		{
-			for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
-			{
-				target.draw(*this->m_shapes[i], states);
-			}
+			target.draw(*this->m_shape, states);
 		}
-
-		if (this->m_texts.size() > 0)
+		if (this->m_text != nullptr)
 		{
-			for (std::size_t i = 0; i < this->m_texts.size(); ++i)
-			{
-				target.draw(*this->m_texts[i], states);
-			}
+			target.draw(*this->m_text, states);
 		}
 	}
 	//Toggle
-	Toggle::Toggle()
+	Toggle::Toggle(const char* name)
 	{
-		if (!this->m_font.loadFromFile("resources/sansation.ttf"))
+		this->m_font = std::make_unique<sf::Font>();
+		if (!this->m_font->loadFromFile("resources/sansation.ttf"))
 		{
 			throw std::runtime_error("Failed to find font!");
 		}
 
 		std::fstream file("resources/gui.txt");
-		if (!file.good())
+		if (file.is_open())
 		{
-			std::ofstream outfile("resources/gui.txt");
-			outfile << "Reqierd data about entities are missing!";
-			outfile.close();
-			throw std::runtime_error("Restart requierd!");
-		}
-		file.close();
-
-		std::ifstream data;
-		data.open("resources/gui.txt");
-		if (data.is_open())
-		{
-			unsigned short int m_count = 0;
 			std::string type = "";
 			std::string string = "";
 			bool state = false;
@@ -162,123 +129,103 @@ namespace GUI
 			Color color;
 			Color text_color;
 
-			while (data >> type)
+			while (file >> type >> string)
 			{
-				if (type == "TOGGLE")
+				if (type == "TOGGLE" && string == name)
 				{
-					m_count++;
+					file >> state >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
 
-					data >> string >> state >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
+					this->m_shape = std::make_unique<sf::RectangleShape>(size);
+					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+					this->m_state = std::make_unique<bool>(false);
+					this->m_pressed = std::make_unique<bool>(false);
 
-					this->m_shapes.emplace_back(std::make_unique<sf::RectangleShape>(size));
-					this->m_backgrounds.emplace_back(std::make_unique<sf::Color>(color.r, color.g, color.b, color.a));
-					this->m_states.emplace_back(std::make_unique<bool>(state));
-
-					this->m_shapes[m_count - 1]->setPosition(position);
-					this->m_shapes[m_count - 1]->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-					this->m_shapes[m_count - 1]->setOutlineThickness(5.f);
-					this->m_shapes[m_count - 1]->setOutlineColor(sf::Color(255, 255, 255, color.a));
+					this->m_shape->setPosition(position);
+					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+					this->m_shape->setOutlineThickness(2.f);
+					this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
 
 					if (string != "-")
 					{
-						this->m_texts.emplace_back(std::make_unique<sf::Text>(string, this->m_font));
+						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
 
-						this->m_texts[m_count - 1]->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+						this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
 
-						std::string l = this->m_texts[m_count - 1]->getString();
+						std::string l = this->m_text->getString();
 						std::size_t length = l.length();
 
-						this->m_texts[m_count - 1]->setCharacterSize((unsigned int)(24 - (length * 0.15)));
-						this->m_texts[m_count - 1]->setPosition(this->m_shapes[m_count - 1]->getPosition().x + (this->m_shapes[m_count - 1]->getGlobalBounds().width / 2.f) - this->m_texts[m_count - 1]->getGlobalBounds().width - this->m_shapes[m_count - 1]->getGlobalBounds().width,
-																this->m_shapes[m_count - 1]->getPosition().y + (this->m_shapes[m_count - 1]->getGlobalBounds().height / 2.f) - this->m_texts[m_count - 1]->getGlobalBounds().height / 2.f - 5.f);
-
+						this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+						this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width - this->m_shape->getGlobalBounds().width,
+												  this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
 					}
 				}
 			}
 		}
 		else
 		{
-			throw std::runtime_error("Cannot open data file.");
+			throw std::runtime_error("Cannot open file file.");
 		}
-		data.close();
+		file.close();
 	}
 	Toggle::~Toggle()
 	{
-
 	}
 	void Toggle::update(const sf::Vector2f& mousePos, sf::Event& event)
 	{
-		for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
+		if (this->m_shape != nullptr)
 		{
-			if (this->m_shapes[i]->getGlobalBounds().contains(mousePos) && event.type == sf::Event::MouseButtonPressed)
+			if (this->m_shape->getGlobalBounds().contains(mousePos) && event.type == sf::Event::MouseButtonPressed)
 			{
-				if (!(*this->m_states[i]) && !this->m_pressed)
+				if (!(*this->m_state) && !(*this->m_pressed))
 				{
-					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b / 3, this->m_backgrounds[i]->a));
-					(*this->m_states[i]) = true;
-					this->m_pressed = true;
+					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
+					(*this->m_state) = true;
+					(*this->m_pressed) = true;
 				}
-				else if ((*this->m_states[i]) && !this->m_pressed)
+				else if ((*this->m_state) && !(*this->m_pressed))
 				{
-					this->m_shapes[i]->setFillColor(*this->m_backgrounds[i]);
-					(*this->m_states[i]) = false;
-					this->m_pressed = true;
+					this->m_shape->setFillColor(*this->m_background);
+					(*this->m_state) = false;
+					(*this->m_pressed) = true;
 				}
 			}
-		}
 
-		if (event.type == sf::Event::MouseButtonReleased)
-		{
-			this->m_pressed = false;
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				(*this->m_pressed) = false;
+			}
 		}
 	}
-	const bool Toggle::getState(unsigned short int index)
+	const bool Toggle::getState()
 	{
-		return (*this->m_states[index]);
+		return (*this->m_state);
 	}
 	void Toggle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
 
-		if (this->m_shapes.size() > 0)
+		if (this->m_shape != nullptr)
 		{
-			for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
-			{
-				target.draw(*this->m_shapes[i], states);
-			}
+			target.draw(*this->m_shape, states);
 		}
 
-		if (this->m_texts.size() > 0)
+		if (this->m_text != nullptr)
 		{
-			for (std::size_t i = 0; i < this->m_texts.size(); ++i)
-			{
-				target.draw(*this->m_texts[i], states);
-			}
+			target.draw(*this->m_text, states);
 		}
 	}
 	//Slider
-	Slider::Slider()
+	Slider::Slider(const char* name)
 	{
-		if (!this->m_font.loadFromFile("resources/sansation.ttf"))
+		this->m_font = std::make_unique<sf::Font>();
+		if (!this->m_font->loadFromFile("resources/sansation.ttf"))
 		{
 			throw std::runtime_error("Failed to find font!");
 		}
 
 		std::fstream file("resources/gui.txt");
-		if (!file.good())
+		if (file.is_open())
 		{
-			std::ofstream outfile("resources/gui.txt");
-			outfile << "Reqierd data about entities are missing!";
-			outfile.close();
-			throw std::runtime_error("Restart requierd!");
-		}
-		file.close();
-
-		std::ifstream data;
-		data.open("resources/gui.txt");
-		if (data.is_open())
-		{
-			unsigned short int m_count = 0;
 			std::string type = "";
 			std::string string = "";
 			float value = 0.f;
@@ -287,157 +234,132 @@ namespace GUI
 			Color color;
 			Color text_color;
 
-			while (data >> type)
+			while (file >> type >> string)
 			{
-				if (type == "SLIDER")
+				if (type == "SLIDER" && string == name)
 				{
-					m_count++;
+					file >> value >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
 
-					data >> string >> value >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
+					this->m_shape = std::make_unique<sf::RectangleShape>(size);
+					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+					this->c_shape = std::make_unique<sf::RectangleShape>(size);
+					this->c_value = std::make_unique<float>(value);
 
-					this->m_shapes.emplace_back(std::make_unique<sf::RectangleShape>(size));
-					this->current_values.emplace_back(std::make_unique<sf::RectangleShape>(size));
-					this->m_values.emplace_back(std::make_unique<float>(value));
-					this->m_backgrounds.emplace_back(std::make_unique<sf::Color>(color.r, color.g, color.b, color.a));
+					this->m_shape->setPosition(position);
+					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
 
-					this->m_shapes[m_count - 1]->setPosition(position);
-					this->m_shapes[m_count - 1]->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-
-					this->current_values[m_count - 1]->setPosition(this->m_shapes[m_count - 1]->getPosition());
-					this->current_values[m_count - 1]->setFillColor(sf::Color(this->m_backgrounds[m_count - 1]->r / 2, this->m_backgrounds[m_count - 1]->g / 2, this->m_backgrounds[m_count - 1]->b / 2, this->m_backgrounds[m_count - 1]->a));
+					this->c_shape->setPosition(this->m_shape->getPosition());
+					this->c_shape->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
 
 					if (string != "-")
 					{
-						this->m_texts.emplace_back(std::make_unique<sf::Text>(string, this->m_font));
-						this->m_string.emplace_back(std::make_unique<std::string>(string));
+						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+						this->c_string = std::make_unique<std::string>(string);
 
-						this->m_texts[m_count - 1]->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+						this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
 
-						std::string l = this->m_texts[m_count - 1]->getString();
+						std::string l = this->m_text->getString();
 						std::size_t length = l.length();
 
-						this->m_texts[m_count - 1]->setCharacterSize((unsigned int)(24 - (length * 0.15)));
-						this->m_texts[m_count - 1]->setPosition(this->m_shapes[m_count - 1]->getPosition().x + (this->m_shapes[m_count - 1]->getGlobalBounds().width / 2.f) - this->m_texts[m_count - 1]->getGlobalBounds().width / 2.f - 10.f,
-																this->m_shapes[m_count - 1]->getPosition().y + (this->m_shapes[m_count - 1]->getGlobalBounds().height / 2.f) - this->m_texts[m_count - 1]->getGlobalBounds().height / 2.f - this->m_shapes[m_count - 1]->getGlobalBounds().height - 10.f);
+						this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+						this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width / 2.f - 10.f,
+												  this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - this->m_shape->getGlobalBounds().height - 10.f);
 					}
 				}
 			}
 		}
 		else
 		{
-			throw std::runtime_error("Cannot open data file.");
+			throw std::runtime_error("Cannot open file file.");
 		}
-		data.close();
+		file.close();
 	}
 	Slider::~Slider()
 	{
-
 	}
 	void Slider::update(const sf::Vector2f& mousePos, sf::Event& event)
 	{
-		for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
+		if (this->m_shape != nullptr)
 		{
-			if (this->m_shapes[i]->getGlobalBounds().contains(mousePos))
+			if (this->m_shape->getGlobalBounds().contains(mousePos))
 			{
-				this->m_shapes[i]->setFillColor(*this->m_backgrounds[i]);
+				this->m_shape->setFillColor(*this->m_background);
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 				{
-					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b, this->m_backgrounds[i]->a));
-					(*this->m_values[i]) -= 0.01f;
+					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b, this->m_background->a));
+					(*this->c_value) -= 0.01f;
 				}
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 				{
-					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b, this->m_backgrounds[i]->a));
-					(*this->m_values[i]) += 0.01f;
+					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b, this->m_background->a));
+					(*this->c_value) += 0.01f;
 				}
 				else if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
-					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b, this->m_backgrounds[i]->a));
-					(*this->m_values[i]) = ((this->m_shapes[i]->getPosition().x - mousePos.x) / this->m_shapes[i]->getGlobalBounds().width) * -1;
+					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b, this->m_background->a));
+					(*this->c_value) = ((this->m_shape->getPosition().x - mousePos.x) / this->m_shape->getGlobalBounds().width) * -1;
 				}
 			}
 			else
 			{
-				this->m_shapes[i]->setFillColor(*this->m_backgrounds[i]);
+				this->m_shape->setFillColor(*this->m_background);
 			}
 
-			if ((*this->m_values[i]) == 0.0f)
+			if ((*this->c_value) == 0.0f)
 			{
-				this->m_texts[i]->setFillColor(sf::Color(this->m_texts[i]->getFillColor().r, this->m_texts[i]->getFillColor().g, this->m_texts[i]->getFillColor().b, 100));
-				this->m_backgrounds[i]->a = 100;
+				this->m_text->setFillColor(sf::Color(this->m_text->getFillColor().r, this->m_text->getFillColor().g, this->m_text->getFillColor().b, 100));
+				this->m_background->a = 100;
 			}
 			else
 			{
-				this->m_texts[i]->setFillColor(sf::Color(this->m_texts[i]->getFillColor().r, this->m_texts[i]->getFillColor().g, this->m_texts[i]->getFillColor().b, 255));
-				this->m_backgrounds[i]->a = 255;
+				this->m_text->setFillColor(sf::Color(this->m_text->getFillColor().r, this->m_text->getFillColor().g, this->m_text->getFillColor().b, 255));
+				this->m_background->a = 255;
 			}
 
-			if ((*this->m_values[i]) < 0.f)
+			if ((*this->c_value) < 0.f)
 			{
-				(*this->m_values[i]) = 0.f;
+				(*this->c_value) = 0.f;
 			}
-			else if ((*this->m_values[i]) > 1.f)
+			else if ((*this->c_value) > 1.f)
 			{
-				(*this->m_values[i]) = 1.f;
+				(*this->c_value) = 1.f;
 			}
 
-			this->current_values[i]->setSize(sf::Vector2f(this->m_shapes[i]->getSize().x * (*this->m_values[i]), this->m_shapes[i]->getSize().y));
-		}
-
-		for (std::size_t i = 0; i < this->m_texts.size(); ++i)
-		{
-			this->m_texts[i]->setString(*this->m_string[i] + ": " + std::to_string(((int)((*this->m_values[i]) * 100))));
+			this->c_shape->setSize(sf::Vector2f(this->m_shape->getSize().x * (*this->c_value), this->m_shape->getSize().y));
+			this->m_text->setString((*this->c_string) + ": " + std::to_string(((int)((*this->c_value) * 100))));
 		}
 	}
-	const float Slider::getValue(unsigned short int index)
+	const float Slider::getValue()
 	{
-		return (*this->m_values[index]);
+		return (*this->c_value);
 	}
 	void Slider::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
 
-		if (this->m_shapes.size() > 0)
+		if (this->m_shape != nullptr)
 		{
-			for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
-			{
-				target.draw(*this->m_shapes[i], states);
-				target.draw(*this->current_values[i], states);
-			}
+			target.draw(*this->m_shape, states);
+			target.draw(*this->c_shape, states);
 		}
-
-		if (this->m_texts.size() > 0)
+		if (this->m_text != nullptr)
 		{
-			for (std::size_t i = 0; i < this->m_texts.size(); ++i)
-			{
-				target.draw(*this->m_texts[i], states);
-			}
+			target.draw(*this->m_text, states);
 		}
 	}
 	//Dropdown
-	Dropdown::Dropdown(std::vector<std::string>& list)
+	Dropdown::Dropdown(std::vector<std::string>& list, const char* name)
 	{
-		if (!this->m_font.loadFromFile("resources/sansation.ttf"))
+		this->m_font = std::make_unique<sf::Font>();
+		if (!this->m_font->loadFromFile("resources/sansation.ttf"))
 		{
 			throw std::runtime_error("Failed to find font!");
 		}
 
 		std::fstream file("resources/gui.txt");
-		if (!file.good())
+		if (file.is_open())
 		{
-			std::ofstream outfile("resources/gui.txt");
-			outfile << "Reqierd data about entities are missing!";
-			outfile.close();
-			throw std::runtime_error("Restart requierd!");
-		}
-		file.close();
-
-		std::ifstream data;
-		data.open("resources/gui.txt");
-		if (data.is_open())
-		{
-			unsigned short int m_count = 0;
 			std::string type = "";
 			std::string string = "";
 			sf::Vector2f size;
@@ -445,295 +367,281 @@ namespace GUI
 			Color color;
 			Color text_color;
 
-			while (data >> type)
+			while (file >> type >> string)
 			{
-				if (type == "DROPDOWN")
+				if (type == "DROPDOWN" && string == name)
 				{
-					m_count++;
+					file >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
 
-					data >> string >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
+					this->m_shape = std::make_unique<sf::RectangleShape>(size);
+					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+					this->a_element = std::make_unique<int>(0);
+					this->show_list = std::make_unique<bool>(false);
+					this->m_pressed = std::make_unique<bool>(false);
 
-					this->m_shapes.emplace_back(std::make_unique<sf::RectangleShape>(size));
-					this->m_backgrounds.emplace_back(std::make_unique<sf::Color>(color.r, color.g, color.b, color.a));
-
-					this->m_shapes[m_count - 1]->setPosition(position);
-					this->m_shapes[m_count - 1]->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-					this->m_shapes[m_count - 1]->setOutlineThickness(2.f);
-					this->m_shapes[m_count - 1]->setOutlineColor(sf::Color(255, 255, 255, color.a));
+					this->m_shape->setPosition(position);
+					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+					this->m_shape->setOutlineThickness(2.f);
+					this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
 
 					for (std::size_t i = 0; i < list.size(); ++i)
 					{
-						this->m_list.emplace_back(std::make_unique<std::string>(list[i]));
+						this->c_list.emplace_back(std::make_unique<std::string>(list[i]));
 					}
-					this->active_text.emplace_back(std::make_unique<sf::Text>(*this->m_list[this->active_element], this->m_font));
+					this->a_text = std::make_unique<sf::Text>(*this->c_list[*this->a_element], *this->m_font);
 
-					std::string al = this->active_text[m_count - 1]->getString();
+					std::string al = this->a_text->getString();
 					std::size_t alength = al.length();
 
-					this->active_text[m_count - 1]->setCharacterSize((unsigned int)(24 - (alength * 0.15)));
-					this->active_text[m_count - 1]->setPosition(this->m_shapes[m_count - 1]->getPosition().x + (this->m_shapes[m_count - 1]->getGlobalBounds().width / 2.f) - this->active_text[m_count - 1]->getGlobalBounds().width / 2.f,
-																this->m_shapes[m_count - 1]->getPosition().y + (this->m_shapes[m_count - 1]->getGlobalBounds().height / 2.f) - this->active_text[m_count - 1]->getGlobalBounds().height / 2.f - 5.f);
+					this->a_text->setCharacterSize((unsigned int)(24 - (alength * 0.15)));
+					this->a_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->a_text->getGlobalBounds().width / 2.f,
+						this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->a_text->getGlobalBounds().height / 2.f - 5.f);
 
 					if (string != "-")
 					{
-						this->m_texts.emplace_back(std::make_unique<sf::Text>(string, this->m_font));
+						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
 
-						this->m_texts[m_count - 1]->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+						this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
 
-						std::string l = this->m_texts[m_count - 1]->getString();
+						std::string l = this->m_text->getString();
 						std::size_t length = l.length();
 
 						if (length > 0 && length < 25)
 						{
-							this->m_texts[m_count - 1]->setCharacterSize((unsigned int)(24 - (length * 0.15)));
-							this->m_texts[m_count - 1]->setPosition(this->m_shapes[m_count - 1]->getPosition().x - this->m_texts[m_count - 1]->getGlobalBounds().width - 15.f,
-																	this->m_shapes[m_count - 1]->getPosition().y + (this->m_shapes[m_count - 1]->getGlobalBounds().height / 2.f) - this->m_texts[m_count - 1]->getGlobalBounds().height / 2.f - 5.f);
+							this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+							this->m_text->setPosition(this->m_shape->getPosition().x - this->m_text->getGlobalBounds().width - 15.f,
+								this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
 						}
-
 					}
 				}
 			}
 		}
 		else
 		{
-			throw std::runtime_error("Cannot open data file.");
+			throw std::runtime_error("Cannot open file file.");
 		}
-		data.close();
+		file.close();
 
-		if (this->m_shapes.size() > 0)
+		for (std::size_t i = 0; i < list.size(); ++i)
 		{
-			for (std::size_t i = 0; i < list.size(); ++i)
-			{
-				this->m_elements.emplace_back(std::make_unique<sf::RectangleShape>(this->m_shapes[0]->getSize()));
-				this->backgrounds.emplace_back(std::make_unique<sf::Color>(this->m_backgrounds[0]->r, this->m_backgrounds[0]->g, this->m_backgrounds[0]->b, this->m_backgrounds[0]->a));
-				this->m_options.emplace_back(std::make_unique<sf::Text>(list[i], this->m_font));
+			this->c_elements.emplace_back(std::make_unique<sf::RectangleShape>(this->m_shape->getSize()));
+			this->c_backgrounds.emplace_back(std::make_unique<sf::Color>(this->m_background->r, this->m_background->g, this->m_background->b, this->m_background->a));
+			this->c_options.emplace_back(std::make_unique<sf::Text>(list[i], *this->m_font));
 
-				this->m_elements[i]->setPosition(sf::Vector2f(this->m_shapes[0]->getPosition().x, this->m_shapes[0]->getPosition().y + ((i + 1) * this->m_shapes[0]->getGlobalBounds().height)));
-				this->m_elements[i]->setFillColor(this->m_shapes[0]->getFillColor());
-				this->m_elements[i]->setOutlineThickness(this->m_shapes[0]->getOutlineThickness());
-				this->m_elements[i]->setOutlineColor(this->m_shapes[0]->getOutlineColor());
+			this->c_elements[i]->setPosition(sf::Vector2f(this->m_shape->getPosition().x, this->m_shape->getPosition().y + ((i + 1) * this->m_shape->getGlobalBounds().height)));
+			this->c_elements[i]->setFillColor(this->m_shape->getFillColor());
+			this->c_elements[i]->setOutlineThickness(this->m_shape->getOutlineThickness());
+			this->c_elements[i]->setOutlineColor(this->m_shape->getOutlineColor());
 
-				std::string ol = this->m_options[i]->getString();
-				std::size_t olength = ol.length();
+			std::string ol = this->c_options[i]->getString();
+			std::size_t olength = ol.length();
 
-				this->m_options[i]->setCharacterSize((unsigned int)(24 - (olength * 0.15)));
-				this->m_options[i]->setPosition(this->m_elements[i]->getPosition().x + (this->m_elements[i]->getGlobalBounds().width / 2.f) - this->m_options[i]->getGlobalBounds().width / 2.f,
-												this->m_elements[i]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height / 2.f) - this->m_options[i]->getGlobalBounds().height / 2.f - 5.f);
-			}
+			this->c_options[i]->setCharacterSize((unsigned int)(24 - (olength * 0.15)));
+			this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
+											this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
 		}
+
 	}
 	Dropdown::~Dropdown()
 	{
-
 	}
 	void Dropdown::update(const sf::Vector2f& mousePos, sf::Event& event)
 	{
-		for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
+		if (this->m_shape != nullptr)
 		{
-			this->active_text[i]->setString(*this->m_list[this->active_element]);
+			this->a_text->setString(*this->c_list[*this->a_element]);
 
-			if (this->m_shapes[i]->getGlobalBounds().contains(mousePos))
+			if (this->m_shape->getGlobalBounds().contains(mousePos))
 			{
-				this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 2, this->m_backgrounds[i]->g / 2, this->m_backgrounds[i]->b / 2, this->m_backgrounds[i]->a));
-				if (event.type == sf::Event::MouseButtonPressed && !this->m_pressed && !this->show_list)
+				this->m_shape->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
+				if (event.type == sf::Event::MouseButtonPressed && !(*this->m_pressed) && !*this->show_list)
 				{
-					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b / 3, this->m_backgrounds[i]->a));
-					this->m_pressed = true;
-					this->show_list = true;
+					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
+					(*this->m_pressed) = true;
+					(*this->show_list) = true;
 				}
-				else if (event.type == sf::Event::MouseButtonPressed && !this->m_pressed && this->show_list)
+				else if (event.type == sf::Event::MouseButtonPressed && !(*this->m_pressed) && *this->show_list)
 				{
-					this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b / 3, this->m_backgrounds[i]->a));
-					this->m_pressed = true;
-					this->show_list = false;
+					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
+					(*this->m_pressed) = true;
+					(*this->show_list) = false;
 				}
 			}
 			else
 			{
-				this->m_shapes[i]->setFillColor(*this->m_backgrounds[i]);
+				this->m_shape->setFillColor(*this->m_background);
 			}
 
-			if (this->show_list)
+			if (*this->show_list)
 			{
-				this->m_shapes[i]->setFillColor(sf::Color(this->m_backgrounds[i]->r / 3, this->m_backgrounds[i]->g / 3, this->m_backgrounds[i]->b / 3, this->m_backgrounds[i]->a / 3));
+				this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a / 3));
 			}
-		}
 
-		if (this->m_list.size() > 0)
-		{
-			if (this->show_list)
+			if (this->c_list.size() > 0)
 			{
-				for (std::size_t i = 0; i < this->m_list.size(); ++i)
+				if (*this->show_list)
 				{
-					if (this->m_elements[i]->getGlobalBounds().contains(mousePos))
+					for (std::size_t i = 0; i < this->c_list.size(); ++i)
 					{
-						this->m_elements[i]->setFillColor(sf::Color(this->backgrounds[i]->r / 2, this->backgrounds[i]->g / 2, this->backgrounds[i]->b / 2, this->backgrounds[i]->a));
-						if (event.type == sf::Event::MouseButtonPressed && !this->m_pressed)
+						if (this->c_elements[i]->getGlobalBounds().contains(mousePos))
 						{
-							this->active_element = (int)i;
-							this->m_pressed = true;
-							this->show_list = false;
+							this->c_elements[i]->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
+							if (event.type == sf::Event::MouseButtonPressed && !(*this->m_pressed))
+							{
+								*this->a_element = (int)i;
+								(*this->m_pressed) = true;
+								*this->show_list = false;
+							}
 						}
-					}
-					else
-					{
-						this->m_elements[i]->setFillColor(*this->backgrounds[i]);
-					}
-
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-					{
-						this->m_elements[i]->setPosition(this->m_elements[i]->getPosition().x, this->m_elements[i]->getPosition().y + 15.f);
-						this->m_options[i]->setPosition(this->m_elements[i]->getPosition().x + (this->m_elements[i]->getGlobalBounds().width / 2.f) - this->m_options[i]->getGlobalBounds().width / 2.f,
-							this->m_elements[i]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height / 2.f) - this->m_options[i]->getGlobalBounds().height / 2.f - 5.f);
-					}
-					else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-					{
-						this->m_elements[i]->setPosition(this->m_elements[i]->getPosition().x, this->m_elements[i]->getPosition().y - 15.f);
-						this->m_options[i]->setPosition(this->m_elements[i]->getPosition().x + (this->m_elements[i]->getGlobalBounds().width / 2.f) - this->m_options[i]->getGlobalBounds().width / 2.f,
-							this->m_elements[i]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height / 2.f) - this->m_options[i]->getGlobalBounds().height / 2.f - 5.f);
-					}
-
-					if (i == 0)
-					{
-						if (this->scrool > 0)
+						else
 						{
-							this->m_elements[0]->setPosition(this->m_elements[0]->getPosition().x, this->m_elements[0]->getPosition().y + 15.f);
-							this->m_options[0]->setPosition(this->m_elements[0]->getPosition().x + (this->m_elements[0]->getGlobalBounds().width / 2.f) - this->m_options[0]->getGlobalBounds().width / 2.f,
-															this->m_elements[0]->getPosition().y + (this->m_elements[0]->getGlobalBounds().height / 2.f) - this->m_options[0]->getGlobalBounds().height / 2.f - 5.f);
-
-							this->scrool = 0;
+							this->c_elements[i]->setFillColor(*this->m_background);
 						}
-						else if (this->scrool < 0)
+
+						if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 						{
-							this->m_elements[0]->setPosition(this->m_elements[0]->getPosition().x, this->m_elements[0]->getPosition().y - 15.f);
-							this->m_options[0]->setPosition(this->m_elements[0]->getPosition().x + (this->m_elements[0]->getGlobalBounds().width / 2.f) - this->m_options[0]->getGlobalBounds().width / 2.f,
-															this->m_elements[0]->getPosition().y + (this->m_elements[0]->getGlobalBounds().height / 2.f) - this->m_options[0]->getGlobalBounds().height / 2.f - 5.f);
-
-							this->scrool = 0;
+							this->c_elements[i]->setPosition(this->c_elements[i]->getPosition().x, this->c_elements[i]->getPosition().y + 15.f);
+							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
+								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
 						}
-					}
-					else
-					{
-						this->m_elements[i]->setPosition(sf::Vector2f(this->m_elements[0]->getPosition().x, this->m_elements[0]->getPosition().y + (i * this->m_elements[0]->getGlobalBounds().height)));
-						this->m_options[i]->setPosition(this->m_elements[i]->getPosition().x + (this->m_elements[i]->getGlobalBounds().width / 2.f) - this->m_options[i]->getGlobalBounds().width / 2.f,
-														this->m_elements[i]->getPosition().y + (this->m_elements[i]->getGlobalBounds().height / 2.f) - this->m_options[i]->getGlobalBounds().height / 2.f - 5.f);
+						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+						{
+							this->c_elements[i]->setPosition(this->c_elements[i]->getPosition().x, this->c_elements[i]->getPosition().y - 15.f);
+							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
+								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+						}
+
+						if (i == 0)
+						{
+							if (this->scrool > 0)
+							{
+								this->c_elements[0]->setPosition(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y + 15.f);
+								this->c_options[0]->setPosition(this->c_elements[0]->getPosition().x + (this->c_elements[0]->getGlobalBounds().width / 2.f) - this->c_options[0]->getGlobalBounds().width / 2.f,
+									this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
+
+								this->scrool = 0;
+							}
+							else if (this->scrool < 0)
+							{
+								this->c_elements[0]->setPosition(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y - 15.f);
+								this->c_options[0]->setPosition(this->c_elements[0]->getPosition().x + (this->c_elements[0]->getGlobalBounds().width / 2.f) - this->c_options[0]->getGlobalBounds().width / 2.f,
+									this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
+
+								this->scrool = 0;
+							}
+						}
+						else
+						{
+							this->c_elements[i]->setPosition(sf::Vector2f(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y + (i * this->c_elements[0]->getGlobalBounds().height)));
+							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
+								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+						}
 					}
 				}
 			}
-		}
 
-		if (event.type == sf::Event::MouseButtonReleased)
-		{
-			this->m_pressed = false;
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				(*this->m_pressed) = false;
+			}
 		}
 	}
 	const int Dropdown::getActiveElement()
 	{
-		return this->active_element;
+		return *this->a_element;
 	}
 	void Dropdown::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
 
-		if (this->m_shapes.size() > 0)
+		if (this->m_shape != nullptr)
 		{
-			for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
+			target.draw(*this->m_shape, states);
+			target.draw(*this->a_text, states);
+		
+			if (this->c_elements.size() > 0)
 			{
-				target.draw(*this->m_shapes[i], states);
-				target.draw(*this->active_text[i], states);
-			}
-
-			if (this->m_elements.size() > 0)
-			{
-				if (this->show_list)
+				if (*this->show_list)
 				{
-					for (std::size_t i = 0; i < this->m_elements.size(); ++i)
+					for (std::size_t i = 0; i < this->c_elements.size(); ++i)
 					{
-						target.draw(*this->m_elements[i], states);
-						target.draw(*this->m_options[i], states);
+						target.draw(*this->c_elements[i], states);
+						target.draw(*this->c_options[i], states);
 					}
 				}
 			}
 		}
 
-		if (this->m_texts.size() > 0)
+		if (this->m_text != nullptr)
 		{
-			for (std::size_t i = 0; i < this->m_texts.size(); ++i)
-			{
-				target.draw(*this->m_texts[i], states);
-			}
+			target.draw(*this->m_text, states);
 		}
 	}
 	//Image
-	Image::Image()
+	Image::Image(const char* name)
 	{
 		std::fstream file("resources/gui.txt");
-		if (!file.good())
+		if (file.is_open())
 		{
-			std::ofstream outfile("resources/gui.txt");
-			outfile << "Reqierd data about entities are missing!";
-			outfile.close();
-			throw std::runtime_error("Restart requierd!");
-		}
-		file.close();
-
-		std::ifstream data;
-		data.open("resources/gui.txt");
-		if (data.is_open())
-		{
-			unsigned short int m_count = 0;
 			std::string type = "";
+			std::string string = "";
 			std::string path = "";
 			sf::IntRect area;
 			sf::Vector2f size;
 			sf::Vector2f position;
 
-			while (data >> type)
+			while (file >> type >> string)
 			{
-				if (type == "IMAGE")
+				if (type == "IMAGE" && string == name)
 				{
-					m_count++;
+					file >> path >> area.left >> area.top >> area.width >> area.height >> size.x >> size.y >> position.x >> position.y;
 
-					data >> path >> area.left >> area.top >> area.width >> area.height >> size.x >> size.y >> position.x >> position.y;
-					
-					this->m_shapes.emplace_back(std::make_unique<sf::RectangleShape>(size));
-					this->m_shapes[m_count - 1]->setPosition(position);
-					this->m_shapes[m_count - 1]->setOutlineThickness(2.f);
-					this->m_shapes[m_count - 1]->setOutlineColor(sf::Color(255, 255, 255, 255));
+					this->m_shape = std::make_unique<sf::RectangleShape>(size);
+					this->m_shape->setPosition(position);
+					this->m_shape->setOutlineThickness(2.f);
+					this->m_shape->setOutlineColor(sf::Color(255, 255, 255, 255));
 
-					this->m_textures.emplace_back(std::make_unique<sf::Texture>());
+					this->m_texture = std::make_unique<sf::Texture>();
 
-					this->m_textures[m_count - 1]->loadFromFile(path, area);
-					this->m_shapes[m_count - 1]->setTexture(&(*this->m_textures[m_count - 1]));
+					this->m_texture->loadFromFile(path, area);
+					this->m_texture->setSmooth(true);
+					this->m_texture->setSrgb(true);
+					this->m_shape->setTexture(&(*this->m_texture));
 				}
 			}
 		}
 		else
 		{
-			throw std::runtime_error("Cannot open data file.");
+			throw std::runtime_error("Cannot open file file.");
 		}
-		data.close();
+		file.close();
 	}
 	Image::~Image()
 	{
-
 	}
 	void Image::update(const sf::Vector2f& mousePos, sf::Event& event)
 	{
-
+		if (this->scrool > 0)
+		{
+			this->scrool = 0;
+		}
+		else if (this->scrool < 0)
+		{
+			this->scrool = 0;
+		}
 	}
 	void Image::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
 
-		for (std::size_t i = 0; i < this->m_shapes.size(); ++i)
+		if (this->m_shape != nullptr)
 		{
-			states.texture = &(*this->m_textures[i]);
-			target.draw(*this->m_shapes[i], states);
+			states.texture = &(*this->m_texture);
+			target.draw(*this->m_shape, states);
 		}
 	}
 	//Panel
-	Panel::Panel()
+	Panel::Panel(const char* name)
 	{
 	}
 	Panel::~Panel()
@@ -744,5 +652,152 @@ namespace GUI
 	}
 	void Panel::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
+	}
+	//Menu
+	Menu::Menu()
+	{
+
+	}
+	Menu::~Menu()
+	{
+
+	}
+	void Menu::update(const sf::Vector2f& mousePos, sf::Event& event)
+	{
+		for (std::size_t i = 0; i < this->buttons.size(); ++i)
+		{
+			this->buttons[i]->update(mousePos, event);
+		}
+		for (std::size_t i = 0; i < this->toggles.size(); ++i)
+		{
+			this->toggles[i]->update(mousePos, event);
+		}
+		for (std::size_t i = 0; i < this->sliders.size(); ++i)
+		{
+			this->sliders[i]->update(mousePos, event);
+		}
+		for (std::size_t i = 0; i < this->dropdowns.size(); ++i)
+		{
+			this->dropdowns[i]->update(mousePos, event);
+		}
+		for (std::size_t i = 0; i < this->images.size(); ++i)
+		{
+			this->images[i]->update(mousePos, event);
+		}
+		for (std::size_t i = 0; i < this->panels.size(); ++i)
+		{
+			this->panels[i]->update(mousePos, event);
+		}
+	}
+	const float Menu::getVersion()
+	{
+		return 0.0f;
+	}
+	const bool Menu::onButtonClick(const char* name)
+	{
+		for (std::size_t i = 0; i < this->buttons.size(); ++i)
+		{
+			if (this->buttons[i]->m_text->getString() == name)
+			{
+				return this->buttons[i]->onButtonClick();
+			}
+		}
+	}
+	const int Menu::getActiveElement(const char* name)
+	{
+		for (std::size_t i = 0; i < this->dropdowns.size(); ++i)
+		{
+			if (this->dropdowns[i]->m_text->getString() == name)
+			{
+				return this->dropdowns[i]->getActiveElement();
+			}
+		}
+	}
+	const float Menu::getValue(const char* name)
+	{
+		std::fstream file("resources/gui.txt");
+		if (file.is_open())
+		{
+			std::string string = "";
+			float version = 0.f;
+			while (file >> string)
+			{
+				if (string == "#VERSION")
+				{
+					file >> version;
+					file.close();
+
+					return version;
+				}
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Cannot open data file.");
+		}
+		file.close();
+
+		return 0.f;
+	}
+	const bool Menu::getState(const char* name)
+	{
+		for (std::size_t i = 0; i < this->toggles.size(); ++i)
+		{
+			if (this->toggles[i]->m_text->getString() == name)
+			{
+				return *this->toggles[i]->m_state;
+			}
+		}
+	}
+	void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
+	{
+		for (std::size_t i = 0; i < this->buttons.size(); ++i)
+		{
+			target.draw(*this->buttons[i]);
+		}
+		for (std::size_t i = 0; i < this->toggles.size(); ++i)
+		{
+			target.draw(*this->toggles[i]);
+		}
+		for (std::size_t i = 0; i < this->sliders.size(); ++i)
+		{
+			target.draw(*this->sliders[i]);
+		}
+		for (std::size_t i = 0; i < this->dropdowns.size(); ++i)
+		{
+			target.draw(*this->dropdowns[i]);
+		}
+		for (std::size_t i = 0; i < this->images.size(); ++i)
+		{
+			target.draw(*this->images[i]);
+		}
+		for (std::size_t i = 0; i < this->panels.size(); ++i)
+		{
+			target.draw(*this->panels[i]);
+		}
+	}
+	void Menu::CreateButton(const char* name)
+	{
+		this->buttons.push_back(std::make_unique<Button>(name));
+	}
+	void Menu::CreateToggle(const char* name)
+	{
+		this->toggles.push_back(std::make_unique<Toggle>(name));
+	}
+	void Menu::CreateSlider(const char* name)
+	{
+		this->sliders.push_back(std::make_unique<Slider>(name));
+	}
+	void Menu::CreateDropdown(std::vector<std::string>& list, const char* name)
+	{
+		this->dropdowns.push_back(std::make_unique<Dropdown>(list, name));
+	}
+	void Menu::CreateImage(const char* name)
+	{
+		this->images.push_back(std::make_unique<Image>(name));
+	}
+	void Menu::CreatePanel(const char* name)
+	{
+		this->panels.push_back(std::make_unique<Panel>(name));
 	}
 }

@@ -17,24 +17,26 @@ class Window
 		void update();
 		void draw();
 	private:
-		std::unique_ptr<sf::RenderWindow> window;
+		std::shared_ptr<sf::RenderWindow> window;
 		const char* title;
 
 		sf::Event event;
 		sf::Vector2f mousePos;
 
-		GUI::Button button;
-		GUI::Toggle toggle;
-		GUI::Slider slider;
-		GUI::Image image;
+		GUI::Menu main_menu;
 
 		std::vector<sf::VideoMode> modes;
 		std::vector<std::string> string;
-		GUI::Dropdown* dropdown;
+
+		/*GUI::Button button;
+		GUI::Toggle toggle;
+		GUI::Slider slider;
+
+		std::unique_ptr<GUI::Dropdown> dropdown;
+		std::unique_ptr<GUI::Image> image;*/
 
 		//TODO: More GUI elements (Image, Dropdown, etc...)
 		//TODO: Save location of GUI elements, editor state
-		//TODO: Make 1 big .cpp and .h GUI file
 		//TODO: Make it so you can change the area of the images
 		//TODO:	Zoomable images
 		//TODO: Find a way to change the images
@@ -48,5 +50,4 @@ class Window
 
 		const void PollEvents();
 		const void Quit();
-		const float getVersion();
 };
