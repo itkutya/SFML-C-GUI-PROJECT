@@ -419,25 +419,27 @@ namespace GUI
 		}
 		file.close();
 
-		for (std::size_t i = 0; i < list.size(); ++i)
+		if (this->m_shape != nullptr)
 		{
-			this->c_elements.emplace_back(std::make_unique<sf::RectangleShape>(this->m_shape->getSize()));
-			this->c_backgrounds.emplace_back(std::make_unique<sf::Color>(this->m_background->r, this->m_background->g, this->m_background->b, this->m_background->a));
-			this->c_options.emplace_back(std::make_unique<sf::Text>(list[i], *this->m_font));
+			for (std::size_t i = 0; i < list.size(); ++i)
+			{
+				this->c_elements.emplace_back(std::make_unique<sf::RectangleShape>(this->m_shape->getSize()));
+				this->c_backgrounds.emplace_back(std::make_unique<sf::Color>(this->m_background->r, this->m_background->g, this->m_background->b, this->m_background->a));
+				this->c_options.emplace_back(std::make_unique<sf::Text>(list[i], *this->m_font));
 
-			this->c_elements[i]->setPosition(sf::Vector2f(this->m_shape->getPosition().x, this->m_shape->getPosition().y + ((i + 1) * this->m_shape->getGlobalBounds().height)));
-			this->c_elements[i]->setFillColor(this->m_shape->getFillColor());
-			this->c_elements[i]->setOutlineThickness(this->m_shape->getOutlineThickness());
-			this->c_elements[i]->setOutlineColor(this->m_shape->getOutlineColor());
+				this->c_elements[i]->setPosition(sf::Vector2f(this->m_shape->getPosition().x, this->m_shape->getPosition().y + ((i + 1) * this->m_shape->getGlobalBounds().height)));
+				this->c_elements[i]->setFillColor(this->m_shape->getFillColor());
+				this->c_elements[i]->setOutlineThickness(this->m_shape->getOutlineThickness());
+				this->c_elements[i]->setOutlineColor(this->m_shape->getOutlineColor());
 
-			std::string ol = this->c_options[i]->getString();
-			std::size_t olength = ol.length();
+				std::string ol = this->c_options[i]->getString();
+				std::size_t olength = ol.length();
 
-			this->c_options[i]->setCharacterSize((unsigned int)(24 - (olength * 0.15)));
-			this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
-											this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+				this->c_options[i]->setCharacterSize((unsigned int)(24 - (olength * 0.15)));
+				this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
+					this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+			}
 		}
-
 	}
 	Dropdown::~Dropdown()
 	{
@@ -670,9 +672,12 @@ namespace GUI
 	{
 		for (std::size_t i = 0; i < this->widgets.size(); ++i)
 		{
-			if (this->widgets[i]->m_text->getString() == name)
+			if (this->widgets[i]->m_text != nullptr)
 			{
-				return (*this->widgets[i]->m_state);
+				if (this->widgets[i]->m_text->getString() == name)
+				{
+					return (*this->widgets[i]->m_state);
+				}
 			}
 		}
 		return 0;
