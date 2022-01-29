@@ -33,7 +33,6 @@ namespace GUI
 
 					this->m_shape = std::make_unique<sf::RectangleShape>(size);
 					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
-					this->m_state = std::make_unique<bool>(false);
 					this->m_pressed = std::make_unique<bool>(false);
 
 					this->m_shape->setPosition(position);
@@ -72,16 +71,14 @@ namespace GUI
 	{
 		if (this->m_shape != nullptr)
 		{
-			(*this->m_state) = false;
 			if (this->m_shape->getGlobalBounds().contains(mousePos))
 			{
 				this->m_shape->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
 				if (event.type == sf::Event::MouseButtonPressed && !(*this->m_pressed))
 				{
-					(this->function)();
 					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
-					(*this->m_state) = true;
 					(*this->m_pressed) = true;
+					(this->function)();
 				}
 			}
 			else
@@ -124,7 +121,7 @@ namespace GUI
 		{
 			std::string type = "";
 			std::string string = "";
-			bool state = false;
+			int state = 0;
 			sf::Vector2f size;
 			sf::Vector2f position;
 			Color color;
@@ -138,7 +135,7 @@ namespace GUI
 
 					this->m_shape = std::make_unique<sf::RectangleShape>(size);
 					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
-					this->m_state = std::make_unique<bool>(false);
+					this->m_state = std::make_unique<int>(state);
 					this->m_pressed = std::make_unique<bool>(false);
 
 					this->m_shape->setPosition(position);
@@ -177,17 +174,17 @@ namespace GUI
 		{
 			if (this->m_shape->getGlobalBounds().contains(mousePos) && event.type == sf::Event::MouseButtonPressed)
 			{
-				if (!(*this->m_state) && !(*this->m_pressed))
+				if ((*this->m_state) == 0 && !(*this->m_pressed))
 				{
 					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
-					(*this->m_state) = true;
+					(*this->m_state) = 1;
 					(*this->m_pressed) = true;
 					(this->function)();
 				}
-				else if ((*this->m_state) && !(*this->m_pressed))
+				else if ((*this->m_state) == 1 && !(*this->m_pressed))
 				{
 					this->m_shape->setFillColor(*this->m_background);
-					(*this->m_state) = false;
+					(*this->m_state) = 0;
 					(*this->m_pressed) = true;
 					(this->function)();
 				}
@@ -198,19 +195,13 @@ namespace GUI
 			}
 		}
 	}
-	const bool Toggle::getState()
-	{
-		return (*this->m_state);
-	}
 	void Toggle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
-
 		if (this->m_shape != nullptr)
 		{
 			target.draw(*this->m_shape, states);
 		}
-
 		if (this->m_text != nullptr)
 		{
 			target.draw(*this->m_text, states);
@@ -232,7 +223,7 @@ namespace GUI
 		{
 			std::string type = "";
 			std::string string = "";
-			float value = 0.f;
+			int value = 0;
 			sf::Vector2f size;
 			sf::Vector2f position;
 			Color color;
@@ -247,7 +238,7 @@ namespace GUI
 					this->m_shape = std::make_unique<sf::RectangleShape>(size);
 					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
 					this->c_shape = std::make_unique<sf::RectangleShape>(size);
-					this->c_value = std::make_unique<float>(value);
+					this->m_state = std::make_unique<int>(value);
 
 					this->m_shape->setPosition(position);
 					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
@@ -258,16 +249,16 @@ namespace GUI
 					if (string != "-")
 					{
 						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
-						this->c_string = std::make_unique<std::string>(string);
+						this->c_text = std::make_unique<sf::Text>(string, *this->m_font);
 
-						this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+						this->c_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
 
-						std::string l = this->m_text->getString();
+						std::string l = this->c_text->getString();
 						std::size_t length = l.length();
 
-						this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
-						this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width / 2.f - 10.f,
-												  this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - this->m_shape->getGlobalBounds().height - 10.f);
+						this->c_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+						this->c_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->c_text->getGlobalBounds().width / 2.f - 10.f,
+												  this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->c_text->getGlobalBounds().height / 2.f - this->m_shape->getGlobalBounds().height - 10.f);
 					}
 				}
 			}
@@ -285,7 +276,7 @@ namespace GUI
 	{
 		if (this->m_shape != nullptr)
 		{
-			float value = (*this->c_value);
+			int value = (*this->m_state);
 			if (this->m_shape->getGlobalBounds().contains(mousePos))
 			{
 				this->m_shape->setFillColor(*this->m_background);
@@ -293,17 +284,17 @@ namespace GUI
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 				{
 					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b, this->m_background->a));
-					(*this->c_value) -= 0.01f;
+					(*this->m_state) -= 1;
 				}
 				else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 				{
 					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b, this->m_background->a));
-					(*this->c_value) += 0.01f;
+					(*this->m_state) += 1;
 				}
 				else if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
 					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b, this->m_background->a));
-					(*this->c_value) = ((this->m_shape->getPosition().x - mousePos.x) / this->m_shape->getGlobalBounds().width) * -1;
+					(*this->m_state) = (int)(((this->m_shape->getPosition().x - mousePos.x) / this->m_shape->getGlobalBounds().width) * -100);
 				}
 			}
 			else
@@ -311,50 +302,45 @@ namespace GUI
 				this->m_shape->setFillColor(*this->m_background);
 			}
 
-			if ((*this->c_value) == 0.0f)
+			if ((*this->m_state) == 0)
 			{
-				this->m_text->setFillColor(sf::Color(this->m_text->getFillColor().r, this->m_text->getFillColor().g, this->m_text->getFillColor().b, 100));
+				this->c_text->setFillColor(sf::Color(this->c_text->getFillColor().r, this->c_text->getFillColor().g, this->c_text->getFillColor().b, 100));
 				this->m_background->a = 100;
 			}
 			else
 			{
-				this->m_text->setFillColor(sf::Color(this->m_text->getFillColor().r, this->m_text->getFillColor().g, this->m_text->getFillColor().b, 255));
+				this->c_text->setFillColor(sf::Color(this->c_text->getFillColor().r, this->c_text->getFillColor().g, this->c_text->getFillColor().b, 255));
 				this->m_background->a = 255;
 			}
 
-			if ((*this->c_value) < 0.f)
+			if ((*this->m_state) < 0)
 			{
-				(*this->c_value) = 0.f;
+				(*this->m_state) = 0;
 			}
-			else if ((*this->c_value) > 1.f)
+			else if ((*this->m_state) > 100)
 			{
-				(*this->c_value) = 1.f;
+				(*this->m_state) = 100;
 			}
 
-			if (value != (*this->c_value))
+			if (value != (*this->m_state))
 			{
 				(this->function)();
 			}
-			this->c_shape->setSize(sf::Vector2f(this->m_shape->getSize().x * (*this->c_value), this->m_shape->getSize().y));
-			this->m_text->setString((*this->c_string) + ": " + std::to_string(((int)((*this->c_value) * 100))));
+			this->c_shape->setSize(sf::Vector2f(this->m_shape->getSize().x * ((*this->m_state) / 100.f), this->m_shape->getSize().y));
+			this->c_text->setString(this->m_text->getString() + ": " + std::to_string((*this->m_state)));
 		}
-	}
-	const float Slider::getValue()
-	{
-		return (*this->c_value);
 	}
 	void Slider::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
-
 		if (this->m_shape != nullptr)
 		{
 			target.draw(*this->m_shape, states);
 			target.draw(*this->c_shape, states);
 		}
-		if (this->m_text != nullptr)
+		if (this->c_text != nullptr)
 		{
-			target.draw(*this->m_text, states);
+			target.draw(*this->c_text, states);
 		}
 	}
 	//Dropdown
@@ -386,7 +372,7 @@ namespace GUI
 
 					this->m_shape = std::make_unique<sf::RectangleShape>(size);
 					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
-					this->a_element = std::make_unique<int>(0);
+					this->m_state = std::make_unique<int>(0);
 					this->show_list = std::make_unique<bool>(false);
 					this->m_pressed = std::make_unique<bool>(false);
 
@@ -399,7 +385,7 @@ namespace GUI
 					{
 						this->c_list.emplace_back(std::make_unique<std::string>(list[i]));
 					}
-					this->a_text = std::make_unique<sf::Text>(*this->c_list[*this->a_element], *this->m_font);
+					this->a_text = std::make_unique<sf::Text>(*this->c_list[*this->m_state], *this->m_font);
 
 					std::string al = this->a_text->getString();
 					std::size_t alength = al.length();
@@ -421,7 +407,7 @@ namespace GUI
 						{
 							this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
 							this->m_text->setPosition(this->m_shape->getPosition().x - this->m_text->getGlobalBounds().width - 15.f,
-								this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+													this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
 						}
 					}
 				}
@@ -460,7 +446,7 @@ namespace GUI
 	{
 		if (this->m_shape != nullptr)
 		{
-			this->a_text->setString(*this->c_list[*this->a_element]);
+			this->a_text->setString(*this->c_list[*this->m_state]);
 
 			if (this->m_shape->getGlobalBounds().contains(mousePos))
 			{
@@ -499,7 +485,7 @@ namespace GUI
 							this->c_elements[i]->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
 							if (event.type == sf::Event::MouseButtonPressed && !(*this->m_pressed))
 							{
-								(*this->a_element) = (int)i;
+								(*this->m_state) = (int)i;
 								(*this->m_pressed) = true;
 								(*this->show_list) = false;
 								(this->function)();
@@ -558,10 +544,6 @@ namespace GUI
 			}
 		}
 	}
-	const int Dropdown::getActiveElement()
-	{
-		return (*this->a_element);
-	}
 	void Dropdown::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
@@ -581,7 +563,6 @@ namespace GUI
 				}
 			}
 		}
-
 		if (this->m_text != nullptr)
 		{
 			target.draw(*this->m_text, states);
@@ -659,29 +640,6 @@ namespace GUI
 	{
 
 	}
-	void Menu::update(const sf::Vector2f& mousePos, sf::Event& event)
-	{
-		for (std::size_t i = 0; i < this->buttons.size(); ++i)
-		{
-			this->buttons[i]->update(mousePos, event);
-		}
-		for (std::size_t i = 0; i < this->toggles.size(); ++i)
-		{
-			this->toggles[i]->update(mousePos, event);
-		}
-		for (std::size_t i = 0; i < this->sliders.size(); ++i)
-		{
-			this->sliders[i]->update(mousePos, event);
-		}
-		for (std::size_t i = 0; i < this->dropdowns.size(); ++i)
-		{
-			this->dropdowns[i]->update(mousePos, event);
-		}
-		for (std::size_t i = 0; i < this->images.size(); ++i)
-		{
-			this->images[i]->update(mousePos, event);
-		}
-	}
 	const float Menu::getVersion()
 	{
 		std::fstream file("resources/gui.txt");
@@ -708,80 +666,49 @@ namespace GUI
 
 		return 0.f;
 	}
-	const int Menu::getActiveElement(const char* name)
+	const int Menu::getState(const char* name)
 	{
-		for (std::size_t i = 0; i < this->dropdowns.size(); ++i)
+		for (std::size_t i = 0; i < this->widgets.size(); ++i)
 		{
-			if (this->dropdowns[i]->m_text->getString() == name)
+			if (this->widgets[i]->m_text->getString() == name)
 			{
-				return this->dropdowns[i]->getActiveElement();
+				return (*this->widgets[i]->m_state);
 			}
 		}
 		return 0;
 	}
-	const float Menu::getValue(const char* name)
+	void Menu::update(const sf::Vector2f& mousePos, sf::Event& event)
 	{
-		for (std::size_t i = 0; i < this->sliders.size(); ++i)
+		for (std::size_t i = 0; i < this->widgets.size(); ++i)
 		{
-			if ((*this->sliders[i]->c_string) == name)
-			{
-				return this->sliders[i]->getValue() * 100.f;
-			}
+			this->widgets[i]->update(mousePos, event);
 		}
-		return 0.0f;
-	}
-	const bool Menu::getState(const char* name)
-	{
-		for (std::size_t i = 0; i < this->toggles.size(); ++i)
-		{
-			if (this->toggles[i]->m_text->getString() == name)
-			{
-				return this->toggles[i]->getState();
-			}
-		}
-		return false;
 	}
 	void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
-		for (std::size_t i = 0; i < this->buttons.size(); ++i)
+		for (std::size_t i = 0; i < this->widgets.size(); ++i)
 		{
-			target.draw(*this->buttons[i]);
-		}
-		for (std::size_t i = 0; i < this->toggles.size(); ++i)
-		{
-			target.draw(*this->toggles[i]);
-		}
-		for (std::size_t i = 0; i < this->sliders.size(); ++i)
-		{
-			target.draw(*this->sliders[i]);
-		}
-		for (std::size_t i = 0; i < this->dropdowns.size(); ++i)
-		{
-			target.draw(*this->dropdowns[i]);
-		}
-		for (std::size_t i = 0; i < this->images.size(); ++i)
-		{
-			target.draw(*this->images[i]);
+			target.draw(*this->widgets[i]);
 		}
 	}
 	void Menu::CreateButton(const char* name, std::function<void()> func)
 	{
-		this->buttons.push_back(std::make_unique<Button>(name, func));
+		this->widgets.push_back(std::make_unique<Button>(name, func));
 	}
 	void Menu::CreateToggle(const char* name, std::function<void()> func)
 	{
-		this->toggles.push_back(std::make_unique<Toggle>(name, func));
+		this->widgets.push_back(std::make_unique<Toggle>(name, func));
 	}
 	void Menu::CreateSlider(const char* name, std::function<void()> func)
 	{
-		this->sliders.push_back(std::make_unique<Slider>(name, func));
+		this->widgets.push_back(std::make_unique<Slider>(name, func));
 	}
 	void Menu::CreateDropdown(const char* text, std::vector<std::string>& list, std::function<void()> func)
 	{
-		this->dropdowns.push_back(std::make_unique<Dropdown>(list, text, func));
+		this->widgets.push_back(std::make_unique<Dropdown>(list, text, func));
 	}
 	void Menu::CreateImage(const char* name)
 	{
-		this->images.push_back(std::make_unique<Image>(name));
+		this->widgets.push_back(std::make_unique<Image>(name));
 	}
 }

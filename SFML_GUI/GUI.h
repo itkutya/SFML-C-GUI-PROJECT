@@ -15,10 +15,11 @@ namespace GUI
 		std::unique_ptr<sf::RectangleShape> m_shape;
 		std::unique_ptr<sf::Color> m_background;
 		std::unique_ptr<sf::Text> m_text;
-		std::unique_ptr<bool> m_state;
 		std::unique_ptr<bool> m_pressed;
 		std::unique_ptr<sf::Font> m_font;
 		std::function<void()> function;
+
+		std::unique_ptr<int> m_state;
 
 		short int scrool = 0;
 	private:
@@ -43,8 +44,6 @@ namespace GUI
 		virtual ~Toggle();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
-
-		const bool getState();
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
@@ -56,13 +55,9 @@ namespace GUI
 		virtual ~Slider();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
-		
-		std::unique_ptr<std::string> c_string;
-
-		const float getValue();
 	private:
 		std::unique_ptr<sf::RectangleShape> c_shape;
-		std::unique_ptr<float> c_value;
+		std::unique_ptr<sf::Text> c_text;
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
@@ -74,11 +69,8 @@ namespace GUI
 		virtual ~Dropdown();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
-
-		const int getActiveElement();
 	private:
 		std::unique_ptr<sf::Text> a_text;
-		std::unique_ptr<int> a_element;
 		std::unique_ptr<bool> show_list;
 
 		std::vector<std::unique_ptr<sf::RectangleShape>> c_elements;
@@ -108,11 +100,7 @@ namespace GUI
 		Menu();
 		virtual ~Menu();
 
-		std::vector<std::unique_ptr<Button>> buttons;
-		std::vector<std::unique_ptr<Toggle>> toggles;
-		std::vector<std::unique_ptr<Slider>> sliders;
-		std::vector<std::unique_ptr<Dropdown>> dropdowns;
-		std::vector<std::unique_ptr<Image>> images;
+		std::vector<std::unique_ptr<Widgets>> widgets;
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event);
 
@@ -124,9 +112,7 @@ namespace GUI
 		void CreateDropdown(const char* text, std::vector<std::string>& list, std::function<void()> func);
 		void CreateImage(const char* name);
 
-		const int getActiveElement(const char* name);
-		const float getValue(const char* name);
-		const bool getState(const char* name);
+		const int getState(const char* name);
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};

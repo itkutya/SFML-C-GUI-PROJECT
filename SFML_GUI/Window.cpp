@@ -9,19 +9,19 @@ void Window::printf()
 
 void Window::recreateWindow()
 {
-    std::cout << "Window resized to: " << this->string[this->main_menu.getActiveElement("Resolution")] << "\n";
-    this->window->create(this->modes[this->main_menu.getActiveElement("Resolution")], this->title, this->style);
+    std::cout << "Window resized to: " << this->string[this->main_menu.getState("Resolution")] << "\n";
+    this->window->create(this->modes[this->main_menu.getState("Resolution")], this->title, this->style);
     this->window->setFramerateLimit(60);
 }
 
 void Window::setFullscreen()
 {
-    if (this->main_menu.getState("Fullscreen"))
+    if (this->main_menu.getState("Fullscreen") == 1)
     {
         this->style = sf::Style::Fullscreen;
         this->recreateWindow();
     }
-    else
+    else if(this->main_menu.getState("Fullscreen") == 0)
     {
         this->style = sf::Style::Default;
         this->recreateWindow();
@@ -30,7 +30,7 @@ void Window::setFullscreen()
 
 void Window::setVolume()
 {
-    std::cout << this->main_menu.getValue("Volume") << "\n";
+    std::cout << this->main_menu.getState("Volume") << "\n";
 }
 
 Window::Window(const char* t) : title(t)
@@ -41,7 +41,7 @@ Window::Window(const char* t) : title(t)
     this->main_menu.CreateDropdown("Resolution", this->string, std::bind(&Window::recreateWindow, this));
 
     this->window = std::make_unique<sf::RenderWindow>();
-    this->window->create(this->modes[this->main_menu.getActiveElement("Resolution")], this->title, sf::Style::Default);
+    this->window->create(this->modes[this->main_menu.getState("Resolution")], this->title, sf::Style::Default);
     this->window->setFramerateLimit(60);
 
     this->main_menu.CreateButton("Quit", std::bind(&Window::Quit, this));
