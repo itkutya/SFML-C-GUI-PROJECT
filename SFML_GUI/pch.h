@@ -7,3 +7,4 @@
 #include <fstream>
 #include <cmath>
 #include <memory>
+#include <functional>

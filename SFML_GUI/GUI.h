@@ -18,6 +18,7 @@ namespace GUI
 		std::unique_ptr<bool> m_state;
 		std::unique_ptr<bool> m_pressed;
 		std::unique_ptr<sf::Font> m_font;
+		std::function<void()> function;
 
 		short int scrool = 0;
 	private:
@@ -27,12 +28,10 @@ namespace GUI
 	class Button : public Widgets
 	{
 	public:
-		Button(const char* name = "-");
+		Button(const char* name, std::function<void()> func);
 		virtual ~Button();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
-
-		const bool onButtonClick();
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
@@ -40,7 +39,7 @@ namespace GUI
 	class Toggle : public Widgets
 	{
 	public:
-		Toggle(const char* name = "-");
+		Toggle(const char* name, std::function<void()> func);
 		virtual ~Toggle();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
@@ -53,7 +52,7 @@ namespace GUI
 	class Slider : public Widgets
 	{
 	public:
-		Slider(const char* name = "-");
+		Slider(const char* name, std::function<void()> func);
 		virtual ~Slider();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
@@ -70,7 +69,7 @@ namespace GUI
 	class Dropdown : public Widgets
 	{
 	public:
-		Dropdown(std::vector<std::string>& list, const char* name = "-");
+		Dropdown(std::vector<std::string>& list, const char* name, std::function<void()> func);
 		virtual ~Dropdown();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
@@ -92,24 +91,13 @@ namespace GUI
 	class Image : public Widgets
 	{
 	public:
-		Image(const char* name = "-");
+		Image(const char* name);
 		virtual ~Image();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
 	private:
 		std::unique_ptr<sf::Texture> m_texture;
 
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
-	};
-	/*-------------------------------------------Panel--------------------------------------------------------*/
-	class Panel : public Widgets
-	{
-	public:
-		Panel(const char* name = "-");
-		virtual ~Panel();
-
-		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
-	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
 	/*-------------------------------------------Menu--------------------------------------------------------*/
@@ -124,23 +112,18 @@ namespace GUI
 		std::vector<std::unique_ptr<Slider>> sliders;
 		std::vector<std::unique_ptr<Dropdown>> dropdowns;
 		std::vector<std::unique_ptr<Image>> images;
-		std::vector<std::unique_ptr<Panel>> panels;
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event);
 
 		const float getVersion();
 
-		void CreateButton(const char* name = "-");
-		void CreateToggle(const char* name = "-");
-		void CreateSlider(const char* name = "-");
-		void CreateDropdown(std::vector<std::string>& list, const char* name = "-");
-		void CreateImage(const char* name = "-");
-		void CreatePanel(const char* name = "-");
+		void CreateButton(const char* name, std::function<void()> func);
+		void CreateToggle(const char* name, std::function<void()> func);
+		void CreateSlider(const char* name, std::function<void()> func);
+		void CreateDropdown(const char* text, std::vector<std::string>& list, std::function<void()> func);
+		void CreateImage(const char* name);
 
-		const bool onButtonClick(const char* name);
 		const int getActiveElement(const char* name);
-		const float getValue(const char* name);
-		const bool getState(const char* name);
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};

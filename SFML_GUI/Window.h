@@ -1,10 +1,10 @@
 #pragma once
 
+#define VERSION 0.1
+
 #include "Timer.h"
 
 #include "GUI.h"
-
-#define VERSION 0.1
 
 class Window
 {
@@ -28,13 +28,6 @@ class Window
 		std::vector<sf::VideoMode> modes;
 		std::vector<std::string> string;
 
-		/*GUI::Button button;
-		GUI::Toggle toggle;
-		GUI::Slider slider;
-
-		std::unique_ptr<GUI::Dropdown> dropdown;
-		std::unique_ptr<GUI::Image> image;*/
-
 		//TODO: More GUI elements (Image, Dropdown, etc...)
 		//TODO: Save location of GUI elements, editor state
 		//TODO: Make it so you can change the area of the images
@@ -49,5 +42,12 @@ class Window
 		//TODO: Optimailise the code
 
 		const void PollEvents();
-		const void Quit();
+		void Quit();
+		const void CreateVideoModes();
+		const void CheckVersion();
+
+		void printf();
+		void recreateWindow();
+		bool setFullscreen();
+		void setVolume();
 };

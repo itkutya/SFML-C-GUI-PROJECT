@@ -5,8 +5,10 @@
 namespace GUI
 {
 	//Button
-	Button::Button(const char* name)
+	Button::Button(const char* name, std::function<void()> func)
 	{
+		this->function = func;
+
 		this->m_font = std::make_unique<sf::Font>();
 		if (!this->m_font->loadFromFile("resources/sansation.ttf"))
 		{
@@ -76,6 +78,7 @@ namespace GUI
 				this->m_shape->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
 				if (event.type == sf::Event::MouseButtonPressed && !(*this->m_pressed))
 				{
+					(this->function)();
 					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
 					(*this->m_state) = true;
 					(*this->m_pressed) = true;
@@ -92,10 +95,6 @@ namespace GUI
 			}
 		}
 	}
-	const bool Button::onButtonClick()
-	{
-		return (*this->m_state);
-	}
 	void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
@@ -110,8 +109,10 @@ namespace GUI
 		}
 	}
 	//Toggle
-	Toggle::Toggle(const char* name)
+	Toggle::Toggle(const char* name, std::function<void()> func)
 	{
+		this->function = func;
+
 		this->m_font = std::make_unique<sf::Font>();
 		if (!this->m_font->loadFromFile("resources/sansation.ttf"))
 		{
@@ -181,12 +182,14 @@ namespace GUI
 					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
 					(*this->m_state) = true;
 					(*this->m_pressed) = true;
+					(this->function)();
 				}
 				else if ((*this->m_state) && !(*this->m_pressed))
 				{
 					this->m_shape->setFillColor(*this->m_background);
 					(*this->m_state) = false;
 					(*this->m_pressed) = true;
+					(this->function)();
 				}
 			}
 
@@ -215,8 +218,10 @@ namespace GUI
 		}
 	}
 	//Slider
-	Slider::Slider(const char* name)
+	Slider::Slider(const char* name, std::function<void()> func)
 	{
+		this->function = func;
+
 		this->m_font = std::make_unique<sf::Font>();
 		if (!this->m_font->loadFromFile("resources/sansation.ttf"))
 		{
@@ -281,6 +286,7 @@ namespace GUI
 	{
 		if (this->m_shape != nullptr)
 		{
+			float value = (*this->c_value);
 			if (this->m_shape->getGlobalBounds().contains(mousePos))
 			{
 				this->m_shape->setFillColor(*this->m_background);
@@ -326,6 +332,10 @@ namespace GUI
 				(*this->c_value) = 1.f;
 			}
 
+			if (value != (*this->c_value))
+			{
+				(this->function)();
+			}
 			this->c_shape->setSize(sf::Vector2f(this->m_shape->getSize().x * (*this->c_value), this->m_shape->getSize().y));
 			this->m_text->setString((*this->c_string) + ": " + std::to_string(((int)((*this->c_value) * 100))));
 		}
@@ -349,8 +359,10 @@ namespace GUI
 		}
 	}
 	//Dropdown
-	Dropdown::Dropdown(std::vector<std::string>& list, const char* name)
+	Dropdown::Dropdown(std::vector<std::string>& list, const char* name, std::function<void()> func)
 	{
+		this->function = func;
+
 		this->m_font = std::make_unique<sf::Font>();
 		if (!this->m_font->loadFromFile("resources/sansation.ttf"))
 		{
@@ -488,9 +500,10 @@ namespace GUI
 							this->c_elements[i]->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
 							if (event.type == sf::Event::MouseButtonPressed && !(*this->m_pressed))
 							{
-								*this->a_element = (int)i;
+								(*this->a_element) = (int)i;
 								(*this->m_pressed) = true;
-								*this->show_list = false;
+								(*this->show_list) = false;
+								(this->function)();
 							}
 						}
 						else
@@ -502,13 +515,13 @@ namespace GUI
 						{
 							this->c_elements[i]->setPosition(this->c_elements[i]->getPosition().x, this->c_elements[i]->getPosition().y + 15.f);
 							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
-								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+															this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
 						}
 						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 						{
 							this->c_elements[i]->setPosition(this->c_elements[i]->getPosition().x, this->c_elements[i]->getPosition().y - 15.f);
 							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
-								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+															this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
 						}
 
 						if (i == 0)
@@ -517,7 +530,7 @@ namespace GUI
 							{
 								this->c_elements[0]->setPosition(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y + 15.f);
 								this->c_options[0]->setPosition(this->c_elements[0]->getPosition().x + (this->c_elements[0]->getGlobalBounds().width / 2.f) - this->c_options[0]->getGlobalBounds().width / 2.f,
-									this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
+																this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
 
 								this->scrool = 0;
 							}
@@ -525,7 +538,7 @@ namespace GUI
 							{
 								this->c_elements[0]->setPosition(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y - 15.f);
 								this->c_options[0]->setPosition(this->c_elements[0]->getPosition().x + (this->c_elements[0]->getGlobalBounds().width / 2.f) - this->c_options[0]->getGlobalBounds().width / 2.f,
-									this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
+																this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
 
 								this->scrool = 0;
 							}
@@ -534,7 +547,7 @@ namespace GUI
 						{
 							this->c_elements[i]->setPosition(sf::Vector2f(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y + (i * this->c_elements[0]->getGlobalBounds().height)));
 							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
-								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+															this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
 						}
 					}
 				}
@@ -548,17 +561,15 @@ namespace GUI
 	}
 	const int Dropdown::getActiveElement()
 	{
-		return *this->a_element;
+		return (*this->a_element);
 	}
 	void Dropdown::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		states.transform *= getTransform();
-
 		if (this->m_shape != nullptr)
 		{
 			target.draw(*this->m_shape, states);
 			target.draw(*this->a_text, states);
-		
 			if (this->c_elements.size() > 0)
 			{
 				if (*this->show_list)
@@ -640,19 +651,6 @@ namespace GUI
 			target.draw(*this->m_shape, states);
 		}
 	}
-	//Panel
-	Panel::Panel(const char* name)
-	{
-	}
-	Panel::~Panel()
-	{
-	}
-	void Panel::update(const sf::Vector2f& mousePos, sf::Event& event)
-	{
-	}
-	void Panel::draw(sf::RenderTarget& target, sf::RenderStates states) const
-	{
-	}
 	//Menu
 	Menu::Menu()
 	{
@@ -684,36 +682,8 @@ namespace GUI
 		{
 			this->images[i]->update(mousePos, event);
 		}
-		for (std::size_t i = 0; i < this->panels.size(); ++i)
-		{
-			this->panels[i]->update(mousePos, event);
-		}
 	}
 	const float Menu::getVersion()
-	{
-		return 0.0f;
-	}
-	const bool Menu::onButtonClick(const char* name)
-	{
-		for (std::size_t i = 0; i < this->buttons.size(); ++i)
-		{
-			if (this->buttons[i]->m_text->getString() == name)
-			{
-				return this->buttons[i]->onButtonClick();
-			}
-		}
-	}
-	const int Menu::getActiveElement(const char* name)
-	{
-		for (std::size_t i = 0; i < this->dropdowns.size(); ++i)
-		{
-			if (this->dropdowns[i]->m_text->getString() == name)
-			{
-				return this->dropdowns[i]->getActiveElement();
-			}
-		}
-	}
-	const float Menu::getValue(const char* name)
 	{
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
@@ -739,15 +709,16 @@ namespace GUI
 
 		return 0.f;
 	}
-	const bool Menu::getState(const char* name)
+	const int Menu::getActiveElement(const char* name)
 	{
-		for (std::size_t i = 0; i < this->toggles.size(); ++i)
+		for (std::size_t i = 0; i < this->dropdowns.size(); ++i)
 		{
-			if (this->toggles[i]->m_text->getString() == name)
+			if (this->dropdowns[i]->m_text->getString() == name)
 			{
-				return *this->toggles[i]->m_state;
+				return this->dropdowns[i]->getActiveElement();
 			}
 		}
+		return 0;
 	}
 	void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
@@ -771,33 +742,25 @@ namespace GUI
 		{
 			target.draw(*this->images[i]);
 		}
-		for (std::size_t i = 0; i < this->panels.size(); ++i)
-		{
-			target.draw(*this->panels[i]);
-		}
 	}
-	void Menu::CreateButton(const char* name)
+	void Menu::CreateButton(const char* name, std::function<void()> func)
 	{
-		this->buttons.push_back(std::make_unique<Button>(name));
+		this->buttons.push_back(std::make_unique<Button>(name, func));
 	}
-	void Menu::CreateToggle(const char* name)
+	void Menu::CreateToggle(const char* name, std::function<void()> func)
 	{
-		this->toggles.push_back(std::make_unique<Toggle>(name));
+		this->toggles.push_back(std::make_unique<Toggle>(name, func));
 	}
-	void Menu::CreateSlider(const char* name)
+	void Menu::CreateSlider(const char* name, std::function<void()> func)
 	{
-		this->sliders.push_back(std::make_unique<Slider>(name));
+		this->sliders.push_back(std::make_unique<Slider>(name, func));
 	}
-	void Menu::CreateDropdown(std::vector<std::string>& list, const char* name)
+	void Menu::CreateDropdown(const char* text, std::vector<std::string>& list, std::function<void()> func)
 	{
-		this->dropdowns.push_back(std::make_unique<Dropdown>(list, name));
+		this->dropdowns.push_back(std::make_unique<Dropdown>(list, text, func));
 	}
 	void Menu::CreateImage(const char* name)
 	{
 		this->images.push_back(std::make_unique<Image>(name));
-	}
-	void Menu::CreatePanel(const char* name)
-	{
-		this->panels.push_back(std::make_unique<Panel>(name));
 	}
 }
