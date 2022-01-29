@@ -192,7 +192,6 @@ namespace GUI
 					(this->function)();
 				}
 			}
-
 			if (event.type == sf::Event::MouseButtonReleased)
 			{
 				(*this->m_pressed) = false;
@@ -724,7 +723,7 @@ namespace GUI
 	{
 		for (std::size_t i = 0; i < this->sliders.size(); ++i)
 		{
-			if (this->sliders[i]->m_text->getString() == name)
+			if ((*this->sliders[i]->c_string) == name)
 			{
 				return this->sliders[i]->getValue() * 100.f;
 			}

@@ -10,20 +10,27 @@ void Window::printf()
 void Window::recreateWindow()
 {
     std::cout << "Window resized to: " << this->string[this->main_menu.getActiveElement("Resolution")] << "\n";
-    this->window->create(this->modes[this->main_menu.getActiveElement("Resolution")], this->title);
+    this->window->create(this->modes[this->main_menu.getActiveElement("Resolution")], this->title, this->style);
     this->window->setFramerateLimit(60);
 }
 
-bool Window::setFullscreen()
+void Window::setFullscreen()
 {
-    std::cout << this->main_menu.getState("Fullscreen") << "\n";
-
-    return this->main_menu.getState("Fullscreen");
+    if (this->main_menu.getState("Fullscreen"))
+    {
+        this->style = sf::Style::Fullscreen;
+        this->recreateWindow();
+    }
+    else
+    {
+        this->style = sf::Style::Default;
+        this->recreateWindow();
+    }
 }
 
 void Window::setVolume()
 {
-    std::cout << this->main_menu.getValue("Volume") * 100.f << "\n";
+    std::cout << this->main_menu.getValue("Volume") << "\n";
 }
 
 Window::Window(const char* t) : title(t)

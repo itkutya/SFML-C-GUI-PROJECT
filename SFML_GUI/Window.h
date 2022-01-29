@@ -20,6 +20,8 @@ class Window
 		std::shared_ptr<sf::RenderWindow> window;
 		const char* title;
 
+		int style = sf::Style::Default;
+
 		sf::Event event;
 		sf::Vector2f mousePos;
 
@@ -48,6 +50,6 @@ class Window
 
 		void printf();
 		void recreateWindow();
-		bool setFullscreen();
+		void setFullscreen();
 		void setVolume();
 };

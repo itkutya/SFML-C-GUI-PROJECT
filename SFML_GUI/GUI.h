@@ -56,12 +56,13 @@ namespace GUI
 		virtual ~Slider();
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event) override;
+		
+		std::unique_ptr<std::string> c_string;
 
 		const float getValue();
 	private:
 		std::unique_ptr<sf::RectangleShape> c_shape;
 		std::unique_ptr<float> c_value;
-		std::unique_ptr<std::string> c_string;
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};
