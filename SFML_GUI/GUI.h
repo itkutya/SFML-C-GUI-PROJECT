@@ -124,6 +124,8 @@ namespace GUI
 		void CreateImage(const char* name);
 
 		const int getActiveElement(const char* name);
+		const float getValue(const char* name);
+		const bool getState(const char* name);
 	private:
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};

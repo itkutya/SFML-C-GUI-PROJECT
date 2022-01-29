@@ -720,6 +720,28 @@ namespace GUI
 		}
 		return 0;
 	}
+	const float Menu::getValue(const char* name)
+	{
+		for (std::size_t i = 0; i < this->sliders.size(); ++i)
+		{
+			if (this->sliders[i]->m_text->getString() == name)
+			{
+				return this->sliders[i]->getValue() * 100.f;
+			}
+		}
+		return 0.0f;
+	}
+	const bool Menu::getState(const char* name)
+	{
+		for (std::size_t i = 0; i < this->toggles.size(); ++i)
+		{
+			if (this->toggles[i]->m_text->getString() == name)
+			{
+				return this->toggles[i]->getState();
+			}
+		}
+		return false;
+	}
 	void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
 		for (std::size_t i = 0; i < this->buttons.size(); ++i)

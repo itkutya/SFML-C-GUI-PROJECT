@@ -16,12 +16,14 @@ void Window::recreateWindow()
 
 bool Window::setFullscreen()
 {
-    return false;
+    std::cout << this->main_menu.getState("Fullscreen") << "\n";
+
+    return this->main_menu.getState("Fullscreen");
 }
 
 void Window::setVolume()
 {
-    std::cout << this->main_menu.getVersion() << "\n";
+    std::cout << this->main_menu.getValue("Volume") * 100.f << "\n";
 }
 
 Window::Window(const char* t) : title(t)
