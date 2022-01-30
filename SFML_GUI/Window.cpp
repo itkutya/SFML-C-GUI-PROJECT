@@ -37,7 +37,7 @@ void Window::setFPSLimit()
 {
     if (this->main_menu.getState("FPS_Limit") == 1)
     {
-        this->fps_limit = 60;
+        this->fps_limit = ((this->main_menu.getState("FPS") + 1) * 30);
         this->window->setFramerateLimit(this->fps_limit);
     }
     else if (this->main_menu.getState("FPS_Limit") == 0)
@@ -50,14 +50,16 @@ void Window::setFPSLimit()
 Window::Window(const char* t) : title(t)
 {
     this->CreateVideoModes();
+    this->CreateAvFPS();
     this->CheckVersion();
 
-    this->main_menu.CreateDropdown("Resolution", this->string, std::bind(&Window::recreateWindow, this));
     this->main_menu.CreateButton("Quit", std::bind(&Window::Quit, this));
     this->main_menu.CreateButton("PrintF", std::bind(&Window::printf, this));
     this->main_menu.CreateToggle("Fullscreen", std::bind(&Window::setFullscreen, this));
     this->main_menu.CreateToggle("FPS_Limit", std::bind(&Window::setFPSLimit, this));
     this->main_menu.CreateSlider("Volume", std::bind(&Window::setVolume, this));
+    this->main_menu.CreateDropdown("Resolution", this->string, std::bind(&Window::recreateWindow, this));
+    this->main_menu.CreateDropdown("FPS", this->av_fps, std::bind(&Window::setFPSLimit, this));
     this->main_menu.CreateImage("Profile");
 
     this->window = std::make_unique<sf::RenderWindow>();
@@ -103,6 +105,12 @@ const void Window::CreateVideoModes()
     this->modes = sf::VideoMode::getFullscreenModes();
     for (std::size_t i = 0; i < modes.size(); ++i)
         this->string.push_back(std::to_string(modes[i].width) + "x" + std::to_string(modes[i].height));
+}
+
+const void Window::CreateAvFPS()
+{
+    for (std::size_t i = 1; i < 5; ++i)
+        this->av_fps.push_back(std::to_string(i * 30));
 }
 
 const void Window::CheckVersion()

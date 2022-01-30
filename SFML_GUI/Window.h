@@ -31,6 +31,8 @@ class Window
 		std::vector<sf::VideoMode> modes;
 		std::vector<std::string> string;
 
+		std::vector<std::string> av_fps;
+
 		//TODO: Add inputbox
 		//TODO: Save location of GUI elements, editor state
 		//TODO: Make it so you can change the area of the images
@@ -47,6 +49,7 @@ class Window
 		const void PollEvents();
 		void Quit();
 		const void CreateVideoModes();
+		const void CreateAvFPS();
 		const void CheckVersion();
 
 		void printf();

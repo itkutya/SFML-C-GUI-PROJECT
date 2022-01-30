@@ -565,7 +565,7 @@ namespace GUI
 							std::size_t alength = al.length();
 
 							this->a_text->setCharacterSize((unsigned int)(24 - (alength * 0.15)));
-							this->a_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->a_text->getGlobalBounds().width / 2.f,
+							this->a_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->a_text->getGlobalBounds().width / 2.f - 5.f,
 								this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->a_text->getGlobalBounds().height / 2.f - 5.f);
 
 							if (string != "-")
@@ -631,7 +631,7 @@ namespace GUI
 				std::size_t alength = al.length();
 
 				this->a_text->setCharacterSize((unsigned int)(24 - (alength * 0.15)));
-				this->a_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->a_text->getGlobalBounds().width / 2.f,
+				this->a_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->a_text->getGlobalBounds().width / 2.f - 5.f,
 					this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->a_text->getGlobalBounds().height / 2.f - 5.f);
 
 				if (string != "-")
