@@ -11,7 +11,7 @@ void Window::recreateWindow()
 {
     std::cout << "Window resized to: " << this->string[this->main_menu.getState("Resolution")] << "\n";
     this->window->create(this->modes[this->main_menu.getState("Resolution")], this->title, this->style);
-    this->window->setFramerateLimit(60);
+    this->window->setFramerateLimit(this->fps_limit);
 }
 
 void Window::setFullscreen()
@@ -33,22 +33,35 @@ void Window::setVolume()
     std::cout << this->main_menu.getState("Volume") << "\n";
 }
 
+void Window::setFPSLimit()
+{
+    if (this->main_menu.getState("FPS_Limit") == 1)
+    {
+        this->fps_limit = 60;
+        this->window->setFramerateLimit(this->fps_limit);
+    }
+    else if (this->main_menu.getState("FPS_Limit") == 0)
+    {
+        this->fps_limit = 0;
+        this->window->setFramerateLimit(this->fps_limit);
+    }
+}
+
 Window::Window(const char* t) : title(t)
 {
     this->CreateVideoModes();
     this->CheckVersion();
 
     this->main_menu.CreateDropdown("Resolution", this->string, std::bind(&Window::recreateWindow, this));
-
-    this->window = std::make_unique<sf::RenderWindow>();
-    this->window->create(this->modes[this->main_menu.getState("Resolution")], this->title, sf::Style::Default);
-    this->window->setFramerateLimit(60);
-
     this->main_menu.CreateButton("Quit", std::bind(&Window::Quit, this));
     this->main_menu.CreateButton("PrintF", std::bind(&Window::printf, this));
     this->main_menu.CreateToggle("Fullscreen", std::bind(&Window::setFullscreen, this));
+    this->main_menu.CreateToggle("FPS_Limit", std::bind(&Window::setFPSLimit, this));
     this->main_menu.CreateSlider("Volume", std::bind(&Window::setVolume, this));
     this->main_menu.CreateImage("Profile");
+
+    this->window = std::make_unique<sf::RenderWindow>();
+    this->setFullscreen();
 
     this->event = sf::Event();
     this->mousePos = sf::Vector2f();

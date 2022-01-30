@@ -210,6 +210,15 @@ namespace GUI
 								this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width - this->m_shape->getGlobalBounds().width,
 									this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
 							}
+
+							if ((*this->m_state) == 1)
+							{
+								this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
+							}
+							else if ((*this->m_state) == 0)
+							{
+								this->m_shape->setFillColor(*this->m_background);
+							}
 						}
 					}
 				}
@@ -259,6 +268,15 @@ namespace GUI
 					this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
 					this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width - this->m_shape->getGlobalBounds().width,
 						this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+				}
+
+				if ((*this->m_state) == 1)
+				{
+					this->m_shape->setFillColor(sf::Color(this->m_background->r / 3, this->m_background->g / 3, this->m_background->b / 3, this->m_background->a));
+				}
+				else if ((*this->m_state) == 0)
+				{
+					this->m_shape->setFillColor(*this->m_background);
 				}
 			}
 		}

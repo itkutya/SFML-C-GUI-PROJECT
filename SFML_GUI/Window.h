@@ -21,6 +21,7 @@ class Window
 		const char* title;
 
 		int style = sf::Style::Default;
+		int fps_limit = 60;
 
 		sf::Event event;
 		sf::Vector2f mousePos;
@@ -52,4 +53,5 @@ class Window
 		void recreateWindow();
 		void setFullscreen();
 		void setVolume();
+		void setFPSLimit();
 };
