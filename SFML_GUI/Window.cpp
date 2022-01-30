@@ -45,7 +45,7 @@ Window::Window(const char* t) : title(t)
     this->window->setFramerateLimit(60);
 
     this->main_menu.CreateButton("Quit", std::bind(&Window::Quit, this));
-    this->main_menu.CreateButton("Quit2", std::bind(&Window::printf, this));
+    this->main_menu.CreateButton("PrintF", std::bind(&Window::printf, this));
     this->main_menu.CreateToggle("Fullscreen", std::bind(&Window::setFullscreen, this));
     this->main_menu.CreateSlider("Volume", std::bind(&Window::setVolume, this));
     this->main_menu.CreateImage("Profile");
@@ -74,19 +74,13 @@ const void Window::PollEvents()
     while (this->window->pollEvent(this->event))
     {
         if (this->event.type == sf::Event::Closed)
-        {
             this->window->close();
-        }
         else if (event.type == sf::Event::MouseWheelMoved)
         {
             if (event.mouseWheel.delta > 0)
-            {
                 std::cout << "Scrolling up!\n";
-            }
             else if (event.mouseWheel.delta < 0)
-            {
                 std::cout << "Scrolling down!\n";
-            }
         }
     }
 }

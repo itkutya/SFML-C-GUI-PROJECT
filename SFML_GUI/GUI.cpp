@@ -15,7 +15,7 @@ namespace GUI
 			throw std::runtime_error("Failed to find font!");
 		}
 
-		std::fstream file("resources/gui.txt");
+		std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
 		if (file.is_open())
 		{
 			std::string type = "";
@@ -25,34 +25,40 @@ namespace GUI
 			Color color;
 			Color text_color;
 
-			while (file >> type >> string)
+			while (file >> type)
 			{
-				if (type == "BUTTON" && string == name)
+				if (type == "BUTTON")
 				{
-					file >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
-
-					this->m_shape = std::make_unique<sf::RectangleShape>(size);
-					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
-					this->m_pressed = std::make_unique<bool>(false);
-
-					this->m_shape->setPosition(position);
-					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-					this->m_shape->setOutlineThickness(2.f);
-					this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
-
-					if (string != "-")
+					while (file >> string)
 					{
-						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
-
-						this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
-
-						std::string l = this->m_text->getString();
-						std::size_t length = l.length();
-
-						if (length > 0 && length < 25)
+						if (string == name)
 						{
-							this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width / 2.f,
-													  this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+							file >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
+
+							this->m_shape = std::make_unique<sf::RectangleShape>(size);
+							this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+							this->m_pressed = std::make_unique<bool>(false);
+
+							this->m_shape->setPosition(position);
+							this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+							this->m_shape->setOutlineThickness(2.f);
+							this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
+
+							if (string != "-")
+							{
+								this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+
+								this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+
+								std::string l = this->m_text->getString();
+								std::size_t length = l.length();
+
+								if (length > 0 && length < 25)
+								{
+									this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width / 2.f,
+										this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+								}
+							}
 						}
 					}
 				}
@@ -63,6 +69,50 @@ namespace GUI
 			throw std::runtime_error("Cannot open the file.");
 		}
 		file.close();
+
+		std::ofstream myfile("resources/gui.txt", std::ios::app);
+		if (myfile.is_open())
+		{
+			if (this->m_shape == nullptr)
+			{
+				std::string type = "BUTTON";
+				std::string string = name;
+				sf::Vector2f size = { 200, 100 };
+				sf::Vector2f position = { 0, 0 };
+				Color color = { 255, 255, 255, 255 };
+				Color text_color = { 255, 255, 255, 255 };
+
+				myfile.seekp(0, std::ios::end);
+				myfile << '\n' << '\n' << type << '\n' << string << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+
+				this->m_shape = std::make_unique<sf::RectangleShape>(size);
+				this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+				this->m_pressed = std::make_unique<bool>(false);
+
+				this->m_shape->setPosition(position);
+				this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+				this->m_shape->setOutlineThickness(2.f);
+				this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
+
+				if (string != "-")
+				{
+					this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+
+					this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+
+					std::string l = this->m_text->getString();
+					std::size_t length = l.length();
+
+					if (length > 0 && length < 25)
+					{
+						this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width / 2.f,
+							this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+					}
+				}
+			}
+		}
+		else
+			std::cout << "Unable to open file";
 	}
 	Button::~Button()
 	{
@@ -127,34 +177,40 @@ namespace GUI
 			Color color;
 			Color text_color;
 
-			while (file >> type >> string)
+			while (file >> type)
 			{
-				if (type == "TOGGLE" && string == name)
+				if (type == "TOGGLE")
 				{
-					file >> state >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
-
-					this->m_shape = std::make_unique<sf::RectangleShape>(size);
-					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
-					this->m_state = std::make_unique<int>(state);
-					this->m_pressed = std::make_unique<bool>(false);
-
-					this->m_shape->setPosition(position);
-					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-					this->m_shape->setOutlineThickness(2.f);
-					this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
-
-					if (string != "-")
+					while (file >> string)
 					{
-						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+						if (string == name)
+						{
+							file >> state >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
 
-						this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+							this->m_shape = std::make_unique<sf::RectangleShape>(size);
+							this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+							this->m_state = std::make_unique<int>(state);
+							this->m_pressed = std::make_unique<bool>(false);
 
-						std::string l = this->m_text->getString();
-						std::size_t length = l.length();
+							this->m_shape->setPosition(position);
+							this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+							this->m_shape->setOutlineThickness(2.f);
+							this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
 
-						this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
-						this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width - this->m_shape->getGlobalBounds().width,
-												  this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+							if (string != "-")
+							{
+								this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+
+								this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+
+								std::string l = this->m_text->getString();
+								std::size_t length = l.length();
+
+								this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+								this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width - this->m_shape->getGlobalBounds().width,
+									this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+							}
+						}
 					}
 				}
 			}
@@ -164,6 +220,50 @@ namespace GUI
 			throw std::runtime_error("Cannot open file file.");
 		}
 		file.close();
+
+		std::ofstream myfile("resources/gui.txt", std::ios::app);
+		if (myfile.is_open())
+		{
+			if (this->m_shape == nullptr)
+			{
+				std::string type = "TOGGLE";
+				std::string string = name;
+				int state = 0;
+				sf::Vector2f size = { 200, 100 };
+				sf::Vector2f position = { 0, 0 };
+				Color color = { 255, 255, 255, 255 };
+				Color text_color = { 255, 255, 255, 255 };
+
+				myfile.seekp(0, std::ios::end);
+				myfile << '\n' << '\n' << type << '\n' << string << '\n' << state << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+
+				this->m_shape = std::make_unique<sf::RectangleShape>(size);
+				this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+				this->m_state = std::make_unique<int>(state);
+				this->m_pressed = std::make_unique<bool>(false);
+
+				this->m_shape->setPosition(position);
+				this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+				this->m_shape->setOutlineThickness(2.f);
+				this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
+
+				if (string != "-")
+				{
+					this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+
+					this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+
+					std::string l = this->m_text->getString();
+					std::size_t length = l.length();
+
+					this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+					this->m_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->m_text->getGlobalBounds().width - this->m_shape->getGlobalBounds().width,
+						this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+				}
+			}
+		}
+		else
+			std::cout << "Unable to open file";
 	}
 	Toggle::~Toggle()
 	{
@@ -229,36 +329,42 @@ namespace GUI
 			Color color;
 			Color text_color;
 
-			while (file >> type >> string)
+			while (file >> type)
 			{
-				if (type == "SLIDER" && string == name)
+				if (type == "SLIDER")
 				{
-					file >> value >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
-
-					this->m_shape = std::make_unique<sf::RectangleShape>(size);
-					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
-					this->c_shape = std::make_unique<sf::RectangleShape>(size);
-					this->m_state = std::make_unique<int>(value);
-
-					this->m_shape->setPosition(position);
-					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-
-					this->c_shape->setPosition(this->m_shape->getPosition());
-					this->c_shape->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
-
-					if (string != "-")
+					while (file >> string)
 					{
-						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
-						this->c_text = std::make_unique<sf::Text>(string, *this->m_font);
+						if (string == name)
+						{
+							file >> value >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
 
-						this->c_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+							this->m_shape = std::make_unique<sf::RectangleShape>(size);
+							this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+							this->c_shape = std::make_unique<sf::RectangleShape>(size);
+							this->m_state = std::make_unique<int>(value);
 
-						std::string l = this->c_text->getString();
-						std::size_t length = l.length();
+							this->m_shape->setPosition(position);
+							this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
 
-						this->c_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
-						this->c_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->c_text->getGlobalBounds().width / 2.f - 10.f,
-												  this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->c_text->getGlobalBounds().height / 2.f - this->m_shape->getGlobalBounds().height - 10.f);
+							this->c_shape->setPosition(this->m_shape->getPosition());
+							this->c_shape->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
+
+							if (string != "-")
+							{
+								this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+								this->c_text = std::make_unique<sf::Text>(string, *this->m_font);
+
+								this->c_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+
+								std::string l = this->c_text->getString();
+								std::size_t length = l.length();
+
+								this->c_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+								this->c_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->c_text->getGlobalBounds().width / 2.f - 10.f,
+									this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->c_text->getGlobalBounds().height / 2.f - this->m_shape->getGlobalBounds().height - 10.f);
+							}
+						}
 					}
 				}
 			}
@@ -268,6 +374,52 @@ namespace GUI
 			throw std::runtime_error("Cannot open file file.");
 		}
 		file.close();
+
+		std::ofstream myfile("resources/gui.txt", std::ios::app);
+		if (myfile.is_open())
+		{
+			if (this->m_shape == nullptr)
+			{
+				std::string type = "SLIDER";
+				std::string string = name;
+				int value = 100;
+				sf::Vector2f size = { 200, 100 };
+				sf::Vector2f position = { 0, 0 };
+				Color color = { 255, 255, 255, 255 };
+				Color text_color = { 255, 255, 255, 255 };
+
+				myfile.seekp(0, std::ios::end);
+				myfile << '\n' << '\n' << type << '\n' << string << '\n' << value << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+
+				this->m_shape = std::make_unique<sf::RectangleShape>(size);
+				this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+				this->c_shape = std::make_unique<sf::RectangleShape>(size);
+				this->m_state = std::make_unique<int>(value);
+
+				this->m_shape->setPosition(position);
+				this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+
+				this->c_shape->setPosition(this->m_shape->getPosition());
+				this->c_shape->setFillColor(sf::Color(this->m_background->r / 2, this->m_background->g / 2, this->m_background->b / 2, this->m_background->a));
+
+				if (string != "-")
+				{
+					this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+					this->c_text = std::make_unique<sf::Text>(string, *this->m_font);
+
+					this->c_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+
+					std::string l = this->c_text->getString();
+					std::size_t length = l.length();
+
+					this->c_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+					this->c_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->c_text->getGlobalBounds().width / 2.f - 10.f,
+						this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->c_text->getGlobalBounds().height / 2.f - this->m_shape->getGlobalBounds().height - 10.f);
+				}
+			}
+		}
+		else
+			std::cout << "Unable to open file";
 	}
 	Slider::~Slider()
 	{
@@ -364,50 +516,56 @@ namespace GUI
 			Color color;
 			Color text_color;
 
-			while (file >> type >> string)
+			while (file >> type)
 			{
-				if (type == "DROPDOWN" && string == name)
+				if (type == "DROPDOWN")
 				{
-					file >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
-
-					this->m_shape = std::make_unique<sf::RectangleShape>(size);
-					this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
-					this->m_state = std::make_unique<int>(0);
-					this->show_list = std::make_unique<bool>(false);
-					this->m_pressed = std::make_unique<bool>(false);
-
-					this->m_shape->setPosition(position);
-					this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
-					this->m_shape->setOutlineThickness(2.f);
-					this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
-
-					for (std::size_t i = 0; i < list.size(); ++i)
+					while (file >> string)
 					{
-						this->c_list.emplace_back(std::make_unique<std::string>(list[i]));
-					}
-					this->a_text = std::make_unique<sf::Text>(*this->c_list[*this->m_state], *this->m_font);
-
-					std::string al = this->a_text->getString();
-					std::size_t alength = al.length();
-
-					this->a_text->setCharacterSize((unsigned int)(24 - (alength * 0.15)));
-					this->a_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->a_text->getGlobalBounds().width / 2.f,
-						this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->a_text->getGlobalBounds().height / 2.f - 5.f);
-
-					if (string != "-")
-					{
-						this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
-
-						this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
-
-						std::string l = this->m_text->getString();
-						std::size_t length = l.length();
-
-						if (length > 0 && length < 25)
+						if (string == name)
 						{
-							this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
-							this->m_text->setPosition(this->m_shape->getPosition().x - this->m_text->getGlobalBounds().width - 15.f,
-													this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+							file >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
+
+							this->m_shape = std::make_unique<sf::RectangleShape>(size);
+							this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+							this->m_state = std::make_unique<int>(0);
+							this->show_list = std::make_unique<bool>(false);
+							this->m_pressed = std::make_unique<bool>(false);
+
+							this->m_shape->setPosition(position);
+							this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+							this->m_shape->setOutlineThickness(2.f);
+							this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
+
+							for (std::size_t i = 0; i < list.size(); ++i)
+							{
+								this->c_list.emplace_back(std::make_unique<std::string>(list[i]));
+							}
+							this->a_text = std::make_unique<sf::Text>(*this->c_list[*this->m_state], *this->m_font);
+
+							std::string al = this->a_text->getString();
+							std::size_t alength = al.length();
+
+							this->a_text->setCharacterSize((unsigned int)(24 - (alength * 0.15)));
+							this->a_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->a_text->getGlobalBounds().width / 2.f,
+								this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->a_text->getGlobalBounds().height / 2.f - 5.f);
+
+							if (string != "-")
+							{
+								this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+
+								this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+
+								std::string l = this->m_text->getString();
+								std::size_t length = l.length();
+
+								if (length > 0 && length < 25)
+								{
+									this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+									this->m_text->setPosition(this->m_shape->getPosition().x - this->m_text->getGlobalBounds().width - 15.f,
+										this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+								}
+							}
 						}
 					}
 				}
@@ -418,6 +576,66 @@ namespace GUI
 			throw std::runtime_error("Cannot open file file.");
 		}
 		file.close();
+
+		std::ofstream myfile("resources/gui.txt", std::ios::app);
+		if (myfile.is_open())
+		{
+			if (this->m_shape == nullptr)
+			{
+				std::string type = "DROPDOWN";
+				std::string string = name;
+				sf::Vector2f size = { 200, 100 };
+				sf::Vector2f position = { 0, 0 };
+				Color color = { 255, 255, 255, 255 };
+				Color text_color = { 255, 255, 255, 255 };
+
+				myfile.seekp(0, std::ios::end);
+				myfile << '\n' << '\n' << type << '\n' << string << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+
+				this->m_shape = std::make_unique<sf::RectangleShape>(size);
+				this->m_background = std::make_unique<sf::Color>(color.r, color.g, color.b, color.a);
+				this->m_state = std::make_unique<int>(0);
+				this->show_list = std::make_unique<bool>(false);
+				this->m_pressed = std::make_unique<bool>(false);
+
+				this->m_shape->setPosition(position);
+				this->m_shape->setFillColor(sf::Color(color.r, color.g, color.b, color.a));
+				this->m_shape->setOutlineThickness(2.f);
+				this->m_shape->setOutlineColor(sf::Color(255, 255, 255, color.a));
+
+				for (std::size_t i = 0; i < list.size(); ++i)
+				{
+					this->c_list.emplace_back(std::make_unique<std::string>(list[i]));
+				}
+				this->a_text = std::make_unique<sf::Text>(*this->c_list[*this->m_state], *this->m_font);
+
+				std::string al = this->a_text->getString();
+				std::size_t alength = al.length();
+
+				this->a_text->setCharacterSize((unsigned int)(24 - (alength * 0.15)));
+				this->a_text->setPosition(this->m_shape->getPosition().x + (this->m_shape->getGlobalBounds().width / 2.f) - this->a_text->getGlobalBounds().width / 2.f,
+					this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->a_text->getGlobalBounds().height / 2.f - 5.f);
+
+				if (string != "-")
+				{
+					this->m_text = std::make_unique<sf::Text>(string, *this->m_font);
+
+					this->m_text->setFillColor(sf::Color(text_color.r, text_color.g, text_color.b, text_color.a));
+
+					std::string l = this->m_text->getString();
+					std::size_t length = l.length();
+
+					if (length > 0 && length < 25)
+					{
+						this->m_text->setCharacterSize((unsigned int)(24 - (length * 0.15)));
+						this->m_text->setPosition(this->m_shape->getPosition().x - this->m_text->getGlobalBounds().width - 15.f,
+							this->m_shape->getPosition().y + (this->m_shape->getGlobalBounds().height / 2.f) - this->m_text->getGlobalBounds().height / 2.f - 5.f);
+					}
+				}
+			}
+		}
+		else
+			std::cout << "Unable to open file";
 
 		if (this->m_shape != nullptr)
 		{
@@ -502,13 +720,13 @@ namespace GUI
 						{
 							this->c_elements[i]->setPosition(this->c_elements[i]->getPosition().x, this->c_elements[i]->getPosition().y + 15.f);
 							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
-															this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
 						}
 						else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 						{
 							this->c_elements[i]->setPosition(this->c_elements[i]->getPosition().x, this->c_elements[i]->getPosition().y - 15.f);
 							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
-															this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
 						}
 
 						if (i == 0)
@@ -517,7 +735,7 @@ namespace GUI
 							{
 								this->c_elements[0]->setPosition(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y + 15.f);
 								this->c_options[0]->setPosition(this->c_elements[0]->getPosition().x + (this->c_elements[0]->getGlobalBounds().width / 2.f) - this->c_options[0]->getGlobalBounds().width / 2.f,
-																this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
+									this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
 
 								this->scrool = 0;
 							}
@@ -525,7 +743,7 @@ namespace GUI
 							{
 								this->c_elements[0]->setPosition(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y - 15.f);
 								this->c_options[0]->setPosition(this->c_elements[0]->getPosition().x + (this->c_elements[0]->getGlobalBounds().width / 2.f) - this->c_options[0]->getGlobalBounds().width / 2.f,
-																this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
+									this->c_elements[0]->getPosition().y + (this->c_elements[0]->getGlobalBounds().height / 2.f) - this->c_options[0]->getGlobalBounds().height / 2.f - 5.f);
 
 								this->scrool = 0;
 							}
@@ -534,7 +752,7 @@ namespace GUI
 						{
 							this->c_elements[i]->setPosition(sf::Vector2f(this->c_elements[0]->getPosition().x, this->c_elements[0]->getPosition().y + (i * this->c_elements[0]->getGlobalBounds().height)));
 							this->c_options[i]->setPosition(this->c_elements[i]->getPosition().x + (this->c_elements[i]->getGlobalBounds().width / 2.f) - this->c_options[i]->getGlobalBounds().width / 2.f,
-															this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
+								this->c_elements[i]->getPosition().y + (this->c_elements[i]->getGlobalBounds().height / 2.f) - this->c_options[i]->getGlobalBounds().height / 2.f - 5.f);
 						}
 					}
 				}
@@ -583,23 +801,29 @@ namespace GUI
 			sf::Vector2f size;
 			sf::Vector2f position;
 
-			while (file >> type >> string)
+			while (file >> type)
 			{
-				if (type == "IMAGE" && string == name)
+				if (type == "IMAGE")
 				{
-					file >> path >> area.left >> area.top >> area.width >> area.height >> size.x >> size.y >> position.x >> position.y;
+					while (file >> string)
+					{
+						if (string == name)
+						{
+							file >> path >> area.left >> area.top >> area.width >> area.height >> size.x >> size.y >> position.x >> position.y;
 
-					this->m_shape = std::make_unique<sf::RectangleShape>(size);
-					this->m_shape->setPosition(position);
-					this->m_shape->setOutlineThickness(2.f);
-					this->m_shape->setOutlineColor(sf::Color(255, 255, 255, 255));
+							this->m_shape = std::make_unique<sf::RectangleShape>(size);
+							this->m_shape->setPosition(position);
+							this->m_shape->setOutlineThickness(2.f);
+							this->m_shape->setOutlineColor(sf::Color(255, 255, 255, 255));
 
-					this->m_texture = std::make_unique<sf::Texture>();
+							this->m_texture = std::make_unique<sf::Texture>();
 
-					this->m_texture->loadFromFile(path, area);
-					this->m_texture->setSmooth(true);
-					this->m_texture->setSrgb(true);
-					this->m_shape->setTexture(&(*this->m_texture));
+							this->m_texture->loadFromFile(path, area);
+							this->m_texture->setSmooth(true);
+							this->m_texture->setSrgb(true);
+							this->m_shape->setTexture(&(*this->m_texture));
+						}
+					}
 				}
 			}
 		}
@@ -608,6 +832,37 @@ namespace GUI
 			throw std::runtime_error("Cannot open file file.");
 		}
 		file.close();
+
+		std::ofstream myfile("resources/gui.txt", std::ios::app);
+		if (myfile.is_open())
+		{
+			if (this->m_shape == nullptr)
+			{
+				std::string type = "IMAGE";
+				std::string string = name;
+				std::string path = "resources/image.png";
+				sf::IntRect area = { 0, 0, 1000, 1000 };
+				sf::Vector2f size = { 200, 100 };
+				sf::Vector2f position = { 0, 0 };
+
+				myfile.seekp(0, std::ios::end);
+				myfile << '\n' << '\n' << type << '\n' << string << '\n' << path << '\n' << area.left << " " << area.top << " " << area.width << " " << area.height << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y;
+
+				this->m_shape = std::make_unique<sf::RectangleShape>(size);
+				this->m_shape->setPosition(position);
+				this->m_shape->setOutlineThickness(2.f);
+				this->m_shape->setOutlineColor(sf::Color(255, 255, 255, 255));
+
+				this->m_texture = std::make_unique<sf::Texture>();
+
+				this->m_texture->loadFromFile(path, area);
+				this->m_texture->setSmooth(true);
+				this->m_texture->setSrgb(true);
+				this->m_shape->setTexture(&(*this->m_texture));
+			}
+		}
+		else
+			std::cout << "Unable to open file";
 	}
 	Image::~Image()
 	{
@@ -636,11 +891,9 @@ namespace GUI
 	//Menu
 	Menu::Menu()
 	{
-
 	}
 	Menu::~Menu()
 	{
-
 	}
 	const float Menu::getVersion()
 	{

@@ -30,7 +30,7 @@ class Window
 		std::vector<sf::VideoMode> modes;
 		std::vector<std::string> string;
 
-		//TODO: More GUI elements (Image, Dropdown, etc...)
+		//TODO: Add inputbox
 		//TODO: Save location of GUI elements, editor state
 		//TODO: Make it so you can change the area of the images
 		//TODO:	Zoomable images
