@@ -9,11 +9,6 @@ namespace GUI
 	{
 		this->function = func;
 
-		if (!font.loadFromFile("resources/sansation.ttf"))
-		{
-			throw std::runtime_error("Failed to find font!");
-		}
-
 		std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
 		if (file.is_open())
 		{
@@ -153,11 +148,6 @@ namespace GUI
 	Toggle::Toggle(const char* name, std::function<void()> func, sf::Font& font)
 	{
 		this->function = func;
-		
-		if (!font.loadFromFile("resources/sansation.ttf"))
-		{
-			throw std::runtime_error("Failed to find font!");
-		}
 
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
@@ -319,11 +309,6 @@ namespace GUI
 	Slider::Slider(const char* name, std::function<void()> func, sf::Font& font)
 	{
 		this->function = func;
-		
-		if (!font.loadFromFile("resources/sansation.ttf"))
-		{
-			throw std::runtime_error("Failed to find font!");
-		}
 
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
@@ -502,11 +487,6 @@ namespace GUI
 	Dropdown::Dropdown(std::vector<std::string>& list, const char* name, std::function<void()> func, sf::Font& font)
 	{
 		this->function = func;
-
-		if (!font.loadFromFile("resources/sansation.ttf"))
-		{
-			throw std::runtime_error("Failed to find font!");
-		}
 
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
@@ -789,11 +769,6 @@ namespace GUI
 	//Image
 	Image::Image(const char* name, sf::Font& font)
 	{
-		if (!font.loadFromFile("resources/sansation.ttf"))
-		{
-			throw std::runtime_error("Failed to find font!");
-		}
-
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
 		{
@@ -891,6 +866,10 @@ namespace GUI
 	//Menu
 	Menu::Menu()
 	{
+		if (!this->m_font.loadFromFile("resources/sansation.ttf"))
+		{
+			throw std::runtime_error("Failed to find font!");
+		}
 	}
 	Menu::~Menu()
 	{

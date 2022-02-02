@@ -62,6 +62,7 @@ Window::Window(const char* t) : title(t)
     this->main_menu.CreateDropdown("FPS", this->av_fps, std::bind(&Window::setFPSLimit, this));
     this->main_menu.CreateImage("Profile");
 
+    this->setFPSLimit();
     this->setFullscreen();
 
     this->event = sf::Event();
