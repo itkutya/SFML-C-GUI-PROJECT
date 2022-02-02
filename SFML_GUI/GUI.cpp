@@ -79,6 +79,7 @@ namespace GUI
 
 				myfile.seekp(0, std::ios::end);
 				myfile << '\n' << '\n' << type << '\n' << string << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+				myfile.close();
 
 				this->m_shape = sf::RectangleShape(size);
 				this->m_background = sf::Color(color.r, color.g, color.b, color.a);
@@ -229,6 +230,7 @@ namespace GUI
 
 				myfile.seekp(0, std::ios::end);
 				myfile << '\n' << '\n' << type << '\n' << string << '\n' << state << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+				myfile.close();
 
 				this->m_shape = sf::RectangleShape(size);
 				this->m_background = sf::Color(color.r, color.g, color.b, color.a);
@@ -279,6 +281,33 @@ namespace GUI
 				this->m_shape.setFillColor(sf::Color(this->m_background.r / 3, this->m_background.g / 3, this->m_background.b / 3, this->m_background.a));
 				this->m_state = 1;
 				this->m_pressed = true;
+
+				std::fstream myfile("resources/gui.txt", std::ios::in | std::ios::out);
+				if (myfile.is_open())
+				{
+					std::string type = "";
+					std::string string = "";
+					int state = this->m_state;
+
+					while (myfile >> type)
+					{
+						if (type == "TOGGLE")
+						{
+							while (myfile >> string)
+							{
+								if (string == this->m_text.getString())
+								{
+									std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
+									file.seekp(myfile.tellg());
+									file << '\n' << state;
+									file.close();
+								}
+							}
+						}
+					}
+				}
+				myfile.close();
+
 				(this->function)();
 			}
 			else if (this->m_state == 1 && !this->m_pressed)
@@ -286,6 +315,33 @@ namespace GUI
 				this->m_shape.setFillColor(this->m_background);
 				this->m_state = 0;
 				this->m_pressed = true;
+
+				std::fstream myfile("resources/gui.txt", std::ios::in | std::ios::out);
+				if (myfile.is_open())
+				{
+					std::string type = "";
+					std::string string = "";
+					int state = this->m_state;
+
+					while (myfile >> type)
+					{
+						if (type == "TOGGLE")
+						{
+							while (myfile >> string)
+							{
+								if (string == this->m_text.getString())
+								{
+									std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
+									file.seekp(myfile.tellg());
+									file << '\n' << state;
+									file.close();
+								}
+							}
+						}
+					}
+				}
+				myfile.close();
+
 				(this->function)();
 			}
 		}
@@ -382,6 +438,7 @@ namespace GUI
 
 				myfile.seekp(0, std::ios::end);
 				myfile << '\n' << '\n' << type << '\n' << string << '\n' << value << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+				myfile.close();
 
 				this->m_shape = sf::RectangleShape(size);
 				this->m_background = sf::Color(color.r, color.g, color.b, color.a);
@@ -466,6 +523,32 @@ namespace GUI
 
 		if (value != this->m_state)
 		{
+			std::fstream myfile("resources/gui.txt", std::ios::in | std::ios::out);
+			if (myfile.is_open())
+			{
+				std::string type = "";
+				std::string string = "";
+				int state = this->m_state;
+
+				while (myfile >> type)
+				{
+					if (type == "SLIDER")
+					{
+						while (myfile >> string)
+						{
+							if (string == this->m_text.getString())
+							{
+								std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
+								file.seekp(myfile.tellg());
+								file << '\n' << state;
+								file.close();
+							}
+						}
+					}
+				}
+			}
+			myfile.close();
+
 			(this->function)();
 		}
 		this->c_shape.setSize(sf::Vector2f(this->m_shape.getSize().x * (this->m_state / 100.f), this->m_shape.getSize().y));
@@ -493,6 +576,7 @@ namespace GUI
 		{
 			std::string type = "";
 			std::string string = "";
+			int state = 0;
 			sf::Vector2f size;
 			sf::Vector2f position;
 			Color color;
@@ -506,11 +590,11 @@ namespace GUI
 					{
 						if (string == name)
 						{
-							file >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
+							file >> state >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
 
 							this->m_shape = sf::RectangleShape(size);
 							this->m_background = sf::Color(color.r, color.g, color.b, color.a);
-							this->m_state = 0;
+							this->m_state = state;
 							this->show_list = false;
 							this->m_pressed = false;
 
@@ -566,17 +650,19 @@ namespace GUI
 			{
 				std::string type = "DROPDOWN";
 				std::string string = name;
+				int state = 0;
 				sf::Vector2f size = { 200, 100 };
 				sf::Vector2f position = { 0, 0 };
 				Color color = { 255, 255, 255, 255 };
 				Color text_color = { 255, 255, 255, 255 };
 
 				myfile.seekp(0, std::ios::end);
-				myfile << '\n' << '\n' << type << '\n' << string << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+				myfile << '\n' << '\n' << state << '\n' << type << '\n' << string << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+				myfile.close();
 
 				this->m_shape = sf::RectangleShape(size);
 				this->m_background = sf::Color(color.r, color.g, color.b, color.a);
-				this->m_state = 0;
+				this->m_state = state;
 				this->show_list = false;
 				this->m_pressed = false;
 
@@ -688,6 +774,33 @@ namespace GUI
 							this->m_state = (int)i;
 							this->m_pressed = true;
 							this->show_list = false;
+							
+							std::fstream myfile("resources/gui.txt", std::ios::in | std::ios::out);
+							if (myfile.is_open())
+							{
+								std::string type = "";
+								std::string string = "";
+								int state = this->m_state;
+
+								while (myfile >> type)
+								{
+									if (type == "DROPDOWN")
+									{
+										while (myfile >> string)
+										{
+											if (string == this->m_text.getString())
+											{
+												std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
+												file.seekp(myfile.tellg());
+												file << '\n' << state;
+												file.close();
+											}
+										}
+									}
+								}
+							}
+							myfile.close();
+
 							(this->function)();
 						}
 					}
@@ -825,6 +938,7 @@ namespace GUI
 
 				myfile.seekp(0, std::ios::end);
 				myfile << '\n' << '\n' << type << '\n' << string << '\n' << path << '\n' << area.left << " " << area.top << " " << area.width << " " << area.height << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y;
+				myfile.close();
 
 				this->m_shape = sf::RectangleShape(size);
 				this->m_shape.setPosition(position);
