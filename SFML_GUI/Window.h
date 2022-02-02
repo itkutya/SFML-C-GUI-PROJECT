@@ -17,7 +17,7 @@ class Window
 		void update();
 		void draw();
 	private:
-		std::shared_ptr<sf::RenderWindow> window;
+		sf::RenderWindow window;
 		const char* title;
 
 		int style = sf::Style::Default;

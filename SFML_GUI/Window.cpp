@@ -10,8 +10,8 @@ void Window::printf()
 void Window::recreateWindow()
 {
     std::cout << "Window resized to: " << this->string[this->main_menu.getState("Resolution")] << "\n";
-    this->window->create(this->modes[this->main_menu.getState("Resolution")], this->title, this->style);
-    this->window->setFramerateLimit(this->fps_limit);
+    this->window.create(this->modes[this->main_menu.getState("Resolution")], this->title, this->style);
+    this->window.setFramerateLimit(this->fps_limit);
 }
 
 void Window::setFullscreen()
@@ -38,12 +38,12 @@ void Window::setFPSLimit()
     if (this->main_menu.getState("FPS_Limit") == 1)
     {
         this->fps_limit = ((this->main_menu.getState("FPS") + 1) * 30);
-        this->window->setFramerateLimit(this->fps_limit);
+        this->window.setFramerateLimit(this->fps_limit);
     }
     else if (this->main_menu.getState("FPS_Limit") == 0)
     {
         this->fps_limit = 0;
-        this->window->setFramerateLimit(this->fps_limit);
+        this->window.setFramerateLimit(this->fps_limit);
     }
 }
 
@@ -62,7 +62,6 @@ Window::Window(const char* t) : title(t)
     this->main_menu.CreateDropdown("FPS", this->av_fps, std::bind(&Window::setFPSLimit, this));
     this->main_menu.CreateImage("Profile");
 
-    this->window = std::make_unique<sf::RenderWindow>();
     this->setFullscreen();
 
     this->event = sf::Event();
@@ -76,20 +75,20 @@ Window::~Window()
 
 bool Window::IsOpen()
 {
-	return this->window->isOpen();
+	return this->window.isOpen();
 }
 
 void Window::Quit()
 {
-    this->window->close();
+    this->window.close();
 }
 
 const void Window::PollEvents()
 {
-    while (this->window->pollEvent(this->event))
+    while (this->window.pollEvent(this->event))
     {
         if (this->event.type == sf::Event::Closed)
-            this->window->close();
+            this->window.close();
         else if (event.type == sf::Event::MouseWheelMoved)
         {
             if (event.mouseWheel.delta > 0)
@@ -123,14 +122,14 @@ const void Window::CheckVersion()
 
 void Window::draw()
 {
-    this->window->clear();
-    this->window->draw(this->main_menu);
-    this->window->display();
+    this->window.clear();
+    this->window.draw(this->main_menu);
+    this->window.display();
 }
 
 void Window::update()
 {
-    this->mousePos = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
+    this->mousePos = this->window.mapPixelToCoords(sf::Mouse::getPosition(this->window));
     this->main_menu.update(mousePos, this->event);
     this->PollEvents();
 }
