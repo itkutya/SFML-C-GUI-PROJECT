@@ -528,7 +528,7 @@ namespace GUI
 			{
 				std::string type = "";
 				std::string string = "";
-				int state = this->m_state;
+				std::string state = std::to_string(this->m_state);
 
 				while (myfile >> type)
 				{
@@ -540,7 +540,8 @@ namespace GUI
 							{
 								std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
 								file.seekp(myfile.tellg());
-								file << '\n' << state;
+								//TODO: FIX THIS!!!
+								//file << '\n' << state;
 								file.close();
 							}
 						}
