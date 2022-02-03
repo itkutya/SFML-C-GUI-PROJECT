@@ -50,7 +50,7 @@ Resolution
 
 DROPDOWN
 FPS
-1
+0
 50 50
 600 500
 0 0 100 255
@@ -60,6 +60,6 @@ IMAGE
 Profile
 resources/image.png
 1400 500 1000 1200
-200 100
+100 100
 10 10
 

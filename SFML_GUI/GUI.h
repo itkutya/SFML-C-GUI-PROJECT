@@ -102,9 +102,6 @@ namespace GUI
 		Menu();
 		virtual ~Menu();
 
-		std::vector<std::unique_ptr<Widgets>> widgets;
-		std::vector<std::unique_ptr<int>> it;
-
 		void update(const sf::Vector2f& mousePos, sf::Event& event);
 
 		const int getVersion();
@@ -118,6 +115,9 @@ namespace GUI
 		const int getState(const char* name);
 	private:
 		sf::Font m_font;
+
+		std::vector<std::unique_ptr<Widgets>> widgets;
+		std::vector<std::unique_ptr<int>> it;
 
 		virtual void draw(sf::RenderTarget& target, sf::RenderStates states = sf::RenderStates::Default) const;
 	};

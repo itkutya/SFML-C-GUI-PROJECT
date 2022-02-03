@@ -921,7 +921,7 @@ namespace GUI
 		}
 		file.close();
 
-		return 0.f;
+		return 0;
 	}
 	const int Menu::getState(const char* name)
 	{
