@@ -287,7 +287,14 @@ namespace GUI
 				{
 					std::string type = "";
 					std::string string = "";
-					int state = this->m_state;
+					std::string state = std::to_string(this->m_state);
+					std::string empty = "";
+
+					std::string e = " ";
+					for (std::size_t i = 0; i < 3; ++i)
+					{
+						empty = empty + e;
+					}
 
 					while (myfile >> type)
 					{
@@ -297,8 +304,11 @@ namespace GUI
 							{
 								if (string == this->m_text.getString())
 								{
+									std::streamoff pos = myfile.tellg();
 									std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-									file.seekp(myfile.tellg());
+									file.seekp(pos + 1);
+									file << '\n' << empty;
+									file.seekp(pos + 1);
 									file << '\n' << state;
 									file.close();
 								}
@@ -321,7 +331,14 @@ namespace GUI
 				{
 					std::string type = "";
 					std::string string = "";
-					int state = this->m_state;
+					std::string state = std::to_string(this->m_state);
+					std::string empty = "";
+
+					std::string e = " ";
+					for (std::size_t i = 0; i < 3; ++i)
+					{
+						empty = empty + e;
+					}
 
 					while (myfile >> type)
 					{
@@ -331,8 +348,11 @@ namespace GUI
 							{
 								if (string == this->m_text.getString())
 								{
+									std::streamoff pos = myfile.tellg();
 									std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-									file.seekp(myfile.tellg());
+									file.seekp(pos + 1);
+									file << '\n' << empty;
+									file.seekp(pos + 1);
 									file << '\n' << state;
 									file.close();
 								}
@@ -426,6 +446,7 @@ namespace GUI
 		std::ofstream myfile("resources/gui.txt", std::ios::app);
 		if (myfile.is_open())
 		{
+			//TODO: FIX!
 			if (this->m_shape.getSize().x == 0)
 			{
 				std::string type = "SLIDER";
@@ -528,7 +549,8 @@ namespace GUI
 			{
 				std::string type = "";
 				std::string string = "";
-				std::string state = std::to_string(this->m_state);
+				int new_state = this->m_state;
+				std::string empty = std::to_string(new_state);
 
 				while (myfile >> type)
 				{
@@ -538,10 +560,33 @@ namespace GUI
 						{
 							if (string == this->m_text.getString())
 							{
+								std::streamoff pos = myfile.tellg();
 								std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-								file.seekp(myfile.tellg());
-								//TODO: FIX THIS!!!
-								//file << '\n' << state;
+								if (new_state >= 100 && value < 100)
+								{
+									file.seekg(pos + 4);
+									file << empty;
+								}
+								else if (new_state > 10 && new_state < 100 && value >= 100)
+								{
+									file.seekg(pos + 4);
+									file << empty << " ";
+								}
+								else if (new_state < 10)
+								{
+									file.seekg(pos + 4);
+									file << empty << "  ";
+								}
+								else if (value >= 100 && new_state < 10)
+								{
+									file.seekg(pos + 4);
+									file << empty << "  ";
+								}
+								else
+								{
+									file.seekg(pos + 4);
+									file << empty << " ";
+								}
 								file.close();
 							}
 						}
@@ -647,6 +692,7 @@ namespace GUI
 		std::ofstream myfile("resources/gui.txt", std::ios::app);
 		if (myfile.is_open())
 		{
+			//TODO: FIX!
 			if (this->m_shape.getSize().x == 0)
 			{
 				std::string type = "DROPDOWN";
@@ -781,19 +827,29 @@ namespace GUI
 							{
 								std::string type = "";
 								std::string string = "";
-								int state = this->m_state;
+								std::string new_state = std::to_string(this->m_state);
+								std::string empty;
+
+								std::string e = " ";
+								for (std::size_t i = 0; i < 3; ++i)
+								{
+									empty = empty + e;
+								}
 
 								while (myfile >> type)
 								{
-									if (type == "DROPDOWN")
+									if (type == "SLIDER")
 									{
 										while (myfile >> string)
 										{
 											if (string == this->m_text.getString())
 											{
+												std::streamoff pos = myfile.tellg();
 												std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-												file.seekp(myfile.tellg());
-												file << '\n' << state;
+												file.seekp(pos + 1);
+												file << '\n' << empty;
+												file.seekp(pos + 1);
+												file << '\n' << new_state;
 												file.close();
 											}
 										}
@@ -928,6 +984,7 @@ namespace GUI
 		std::ofstream myfile("resources/gui.txt", std::ios::app);
 		if (myfile.is_open())
 		{
+			//TODO: FIX!
 			if (this->m_shape.getSize().x == 0)
 			{
 				std::string type = "IMAGE";

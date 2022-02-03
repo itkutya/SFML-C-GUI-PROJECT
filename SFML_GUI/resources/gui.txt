@@ -24,7 +24,7 @@ Fullscreen
 
 SLIDER
 Volume
-100
+69 
 150 25
 450 125
 255 255 255 255
@@ -55,7 +55,7 @@ FPS_Limit
 
 DROPDOWN
 FPS
-0
+2
 50 50
 600 500
 0 0 100 255
