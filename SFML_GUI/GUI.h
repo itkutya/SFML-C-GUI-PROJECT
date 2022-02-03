@@ -1,5 +1,7 @@
 #pragma once
 
+#define VERSION 1
+
 namespace GUI
 {
 	struct Color

@@ -1,7 +1,5 @@
 #pragma once
 
-#define VERSION 1
-
 #include "Timer.h"
 
 #include "GUI.h"

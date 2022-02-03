@@ -948,7 +948,7 @@ namespace GUI
 				std::fstream myfile("resources/gui.txt", std::ios::out | std::ios::in | std::ios::trunc);
 				if (myfile.is_open())
 				{
-					myfile << "#VERSION " << this->getVersion() << '\n' << '\n';
+					myfile << "#VERSION " << std::to_string(VERSION) << '\n' << '\n';
 					for (std::size_t i = 0; i < this->widgets.size(); ++i)
 					{
 						std::string type = this->widgets[i]->m_type;

@@ -1,4 +1,4 @@
-#VERSION 0
+#VERSION 1
 
 BUTTON
 Quit
@@ -18,7 +18,7 @@ PrintF
 
 TOGGLE
 Fullscreen
-1
+0
 50 50
 600 300
 255 255 255 255
@@ -34,7 +34,7 @@ FPS_Limit
 
 SLIDER
 Volume
-78
+52
 150 25
 450 125
 255 255 255 255
@@ -42,7 +42,7 @@ Volume
 
 DROPDOWN
 Resolution
-0
+5
 200 50
 200 300
 0 0 100 255
@@ -50,7 +50,7 @@ Resolution
 
 DROPDOWN
 FPS
-0
+1
 50 50
 600 500
 0 0 100 255
