@@ -24,7 +24,7 @@ Fullscreen
 
 SLIDER
 Volume
-69 
+100
 150 25
 450 125
 255 255 255 255

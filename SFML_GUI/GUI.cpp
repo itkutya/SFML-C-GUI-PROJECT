@@ -549,8 +549,7 @@ namespace GUI
 			{
 				std::string type = "";
 				std::string string = "";
-				int new_state = this->m_state;
-				std::string empty = std::to_string(new_state);
+				std::string state = std::to_string(this->m_state);
 
 				while (myfile >> type)
 				{
@@ -562,30 +561,30 @@ namespace GUI
 							{
 								std::streamoff pos = myfile.tellg();
 								std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-								if (new_state >= 100 && value < 100)
+								if (this->m_state >= 100 && value < 100)
 								{
 									file.seekg(pos + 4);
-									file << empty;
+									file << state;
 								}
-								else if (new_state > 10 && new_state < 100 && value >= 100)
+								else if (this->m_state > 10 && this->m_state < 100 && value >= 100)
 								{
 									file.seekg(pos + 4);
-									file << empty << " ";
+									file << state << " ";
 								}
-								else if (new_state < 10)
+								else if (this->m_state < 10)
 								{
 									file.seekg(pos + 4);
-									file << empty << "  ";
+									file << state << "  ";
 								}
-								else if (value >= 100 && new_state < 10)
+								else if (value >= 100 && this->m_state < 10)
 								{
 									file.seekg(pos + 4);
-									file << empty << "  ";
+									file << state << "  ";
 								}
 								else
 								{
 									file.seekg(pos + 4);
-									file << empty << " ";
+									file << state << " ";
 								}
 								file.close();
 							}
