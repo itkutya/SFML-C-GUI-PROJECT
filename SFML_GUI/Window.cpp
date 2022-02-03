@@ -60,7 +60,7 @@ Window::Window(const char* t) : title(t)
     this->main_menu.CreateSlider("Volume", std::bind(&Window::setVolume, this));
     this->main_menu.CreateDropdown("Resolution", this->string, std::bind(&Window::recreateWindow, this));
     this->main_menu.CreateDropdown("FPS", this->av_fps, std::bind(&Window::setFPSLimit, this));
-    //this->main_menu.CreateImage("Profile");
+    this->main_menu.CreateImage("Profile");
 
     this->setFPSLimit();
     this->setFullscreen();

@@ -813,8 +813,9 @@ namespace GUI
 							this->m_shape.setOutlineThickness(2.f);
 							this->m_shape.setOutlineColor(sf::Color(255, 255, 255, 255));
 
-							this->m_texture = sf::Texture();
+							this->m_text.setString(name);
 
+							this->m_texture = sf::Texture();
 							this->m_texture.loadFromFile(path, area);
 							this->m_texture.setSmooth(true);
 							this->m_texture.setSrgb(true);
@@ -839,9 +840,9 @@ namespace GUI
 				std::string type = "IMAGE";
 				std::string string = name;
 				std::string path = "resources/image.png";
-				sf::IntRect area = { 0, 0, 1000, 1000 };
 				sf::Vector2f size = { 200, 100 };
 				sf::Vector2f position = { 0, 0 };
+				sf::IntRect area = { 0, 0, 1000, 1000 };
 
 				myfile.seekp(0, std::ios::end);
 				myfile << '\n' << '\n' << type << '\n' << string << '\n' << path << '\n' << area.left << " " << area.top << " " << area.width << " " << area.height << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y;
@@ -852,8 +853,9 @@ namespace GUI
 				this->m_shape.setOutlineThickness(2.f);
 				this->m_shape.setOutlineColor(sf::Color(255, 255, 255, 255));
 
-				this->m_texture = sf::Texture();
+				this->m_text.setString(name);
 
+				this->m_texture = sf::Texture();
 				this->m_texture.loadFromFile(path, area);
 				this->m_texture.setSmooth(true);
 				this->m_texture.setSrgb(true);
@@ -951,15 +953,29 @@ namespace GUI
 					myfile << "#VERSION " << std::to_string(VERSION) << '\n' << '\n';
 					for (std::size_t i = 0; i < this->widgets.size(); ++i)
 					{
-						std::string type = this->widgets[i]->m_type;
-						std::string string = this->widgets[i]->m_text.getString();
-						int state = this->widgets[i]->m_state;
-						sf::Vector2f size = this->widgets[i]->m_shape.getSize();
-						sf::Vector2f position = this->widgets[i]->m_shape.getPosition();
-						Color color = { this->widgets[i]->m_background.r, this->widgets[i]->m_background.g, this->widgets[i]->m_background.b, this->widgets[i]->m_background.a };
-						Color text_color = { this->widgets[i]->m_text.getFillColor().r, this->widgets[i]->m_text.getFillColor().g, this->widgets[i]->m_text.getFillColor().b, this->widgets[i]->m_text.getFillColor().a };
+						if (this->widgets[i]->m_type == "IMAGE")
+						{
+							std::string type = this->widgets[i]->m_type;
+							std::string string = this->widgets[i]->m_text.getString();
+							std::string path = "resources/image.png";
+							sf::Vector2f size = this->widgets[i]->m_shape.getSize();
+							sf::Vector2f position = this->widgets[i]->m_shape.getPosition();
+							sf::IntRect area = { 1400, 500, 1000, 1200 };
 
-						myfile << type << '\n' << string << '\n' << state << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a << '\n' << '\n';
+							myfile << type << '\n' << string << '\n' << path << '\n' << area.left << " " << area.top << " " << area.width << " " << area.height << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << '\n';
+						}
+						else
+						{
+							std::string type = this->widgets[i]->m_type;
+							std::string string = this->widgets[i]->m_text.getString();
+							int state = this->widgets[i]->m_state;
+							sf::Vector2f size = this->widgets[i]->m_shape.getSize();
+							sf::Vector2f position = this->widgets[i]->m_shape.getPosition();
+							Color color = { this->widgets[i]->m_background.r, this->widgets[i]->m_background.g, this->widgets[i]->m_background.b, this->widgets[i]->m_background.a };
+							Color text_color = { this->widgets[i]->m_text.getFillColor().r, this->widgets[i]->m_text.getFillColor().g, this->widgets[i]->m_text.getFillColor().b, this->widgets[i]->m_text.getFillColor().a };
+
+							myfile << type << '\n' << string << '\n' << state << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a << '\n' << '\n';
+						}
 					}
 				}
 				myfile.close();
