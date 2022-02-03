@@ -8,12 +8,14 @@ namespace GUI
 	Button::Button(const char* name, std::function<void()> func, sf::Font& font)
 	{
 		this->function = func;
+		this->m_type = "BUTTON";
 
 		std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
 		if (file.is_open())
 		{
 			std::string type = "";
 			std::string string = "";
+			int state = 0;
 			sf::Vector2f size;
 			sf::Vector2f position;
 			Color color;
@@ -21,13 +23,13 @@ namespace GUI
 
 			while (file >> type)
 			{
-				if (type == "BUTTON")
+				if (type == this->m_type)
 				{
 					while (file >> string)
 					{
 						if (string == name)
 						{
-							file >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
+							file >> state >> size.x >> size.y >> position.x >> position.y >> color.r >> color.g >> color.b >> color.a >> text_color.r >> text_color.g >> text_color.b >> text_color.a;
 
 							this->m_shape = sf::RectangleShape(size);
 							this->m_background = sf::Color(color.r, color.g, color.b, color.a);
@@ -72,13 +74,14 @@ namespace GUI
 			{
 				std::string type = "BUTTON";
 				std::string string = name;
+				int state = 0;
 				sf::Vector2f size = { 200, 100 };
 				sf::Vector2f position = { 0, 0 };
 				Color color = { 255, 255, 255, 255 };
 				Color text_color = { 255, 255, 255, 255 };
 
 				myfile.seekp(0, std::ios::end);
-				myfile << '\n' << '\n' << type << '\n' << string << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
+				myfile << '\n' << '\n' << type << '\n' << string << '\n' << state << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a;
 				myfile.close();
 
 				this->m_shape = sf::RectangleShape(size);
@@ -149,6 +152,7 @@ namespace GUI
 	Toggle::Toggle(const char* name, std::function<void()> func, sf::Font& font)
 	{
 		this->function = func;
+		this->m_type = "TOGGLE";
 
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
@@ -163,7 +167,7 @@ namespace GUI
 
 			while (file >> type)
 			{
-				if (type == "TOGGLE")
+				if (type == this->m_type)
 				{
 					while (file >> string)
 					{
@@ -282,42 +286,6 @@ namespace GUI
 				this->m_state = 1;
 				this->m_pressed = true;
 
-				std::fstream myfile("resources/gui.txt", std::ios::in | std::ios::out);
-				if (myfile.is_open())
-				{
-					std::string type = "";
-					std::string string = "";
-					std::string state = std::to_string(this->m_state);
-					std::string empty = "";
-
-					std::string e = " ";
-					for (std::size_t i = 0; i < 3; ++i)
-					{
-						empty = empty + e;
-					}
-
-					while (myfile >> type)
-					{
-						if (type == "TOGGLE")
-						{
-							while (myfile >> string)
-							{
-								if (string == this->m_text.getString())
-								{
-									std::streamoff pos = myfile.tellg();
-									std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-									file.seekp(pos + 1);
-									file << '\n' << empty;
-									file.seekp(pos + 1);
-									file << '\n' << state;
-									file.close();
-								}
-							}
-						}
-					}
-				}
-				myfile.close();
-
 				(this->function)();
 			}
 			else if (this->m_state == 1 && !this->m_pressed)
@@ -325,42 +293,6 @@ namespace GUI
 				this->m_shape.setFillColor(this->m_background);
 				this->m_state = 0;
 				this->m_pressed = true;
-
-				std::fstream myfile("resources/gui.txt", std::ios::in | std::ios::out);
-				if (myfile.is_open())
-				{
-					std::string type = "";
-					std::string string = "";
-					std::string state = std::to_string(this->m_state);
-					std::string empty = "";
-
-					std::string e = " ";
-					for (std::size_t i = 0; i < 3; ++i)
-					{
-						empty = empty + e;
-					}
-
-					while (myfile >> type)
-					{
-						if (type == "TOGGLE")
-						{
-							while (myfile >> string)
-							{
-								if (string == this->m_text.getString())
-								{
-									std::streamoff pos = myfile.tellg();
-									std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-									file.seekp(pos + 1);
-									file << '\n' << empty;
-									file.seekp(pos + 1);
-									file << '\n' << state;
-									file.close();
-								}
-							}
-						}
-					}
-				}
-				myfile.close();
 
 				(this->function)();
 			}
@@ -385,6 +317,7 @@ namespace GUI
 	Slider::Slider(const char* name, std::function<void()> func, sf::Font& font)
 	{
 		this->function = func;
+		this->m_type = "SLIDER";
 
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
@@ -399,7 +332,7 @@ namespace GUI
 
 			while (file >> type)
 			{
-				if (type == "SLIDER")
+				if (type == this->m_type)
 				{
 					while (file >> string)
 					{
@@ -544,56 +477,6 @@ namespace GUI
 
 		if (value != this->m_state)
 		{
-			std::fstream myfile("resources/gui.txt", std::ios::in | std::ios::out);
-			if (myfile.is_open())
-			{
-				std::string type = "";
-				std::string string = "";
-				std::string state = std::to_string(this->m_state);
-
-				while (myfile >> type)
-				{
-					if (type == "SLIDER")
-					{
-						while (myfile >> string)
-						{
-							if (string == this->m_text.getString())
-							{
-								std::streamoff pos = myfile.tellg();
-								std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-								if (this->m_state >= 100 && value < 100)
-								{
-									file.seekg(pos + 4);
-									file << state;
-								}
-								else if (this->m_state > 10 && this->m_state < 100 && value >= 100)
-								{
-									file.seekg(pos + 4);
-									file << state << " ";
-								}
-								else if (this->m_state < 10)
-								{
-									file.seekg(pos + 4);
-									file << state << "  ";
-								}
-								else if (value >= 100 && this->m_state < 10)
-								{
-									file.seekg(pos + 4);
-									file << state << "  ";
-								}
-								else
-								{
-									file.seekg(pos + 4);
-									file << state << " ";
-								}
-								file.close();
-							}
-						}
-					}
-				}
-			}
-			myfile.close();
-
 			(this->function)();
 		}
 		this->c_shape.setSize(sf::Vector2f(this->m_shape.getSize().x * (this->m_state / 100.f), this->m_shape.getSize().y));
@@ -615,6 +498,7 @@ namespace GUI
 	Dropdown::Dropdown(std::vector<std::string>& list, const char* name, std::function<void()> func, sf::Font& font)
 	{
 		this->function = func;
+		this->m_type = "DROPDOWN";
 
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
@@ -629,7 +513,7 @@ namespace GUI
 
 			while (file >> type)
 			{
-				if (type == "DROPDOWN")
+				if (type == this->m_type)
 				{
 					while (file >> string)
 					{
@@ -820,42 +704,6 @@ namespace GUI
 							this->m_state = (int)i;
 							this->m_pressed = true;
 							this->show_list = false;
-							
-							std::fstream myfile("resources/gui.txt", std::ios::in | std::ios::out);
-							if (myfile.is_open())
-							{
-								std::string type = "";
-								std::string string = "";
-								std::string new_state = std::to_string(this->m_state);
-								std::string empty;
-
-								std::string e = " ";
-								for (std::size_t i = 0; i < 3; ++i)
-								{
-									empty = empty + e;
-								}
-
-								while (myfile >> type)
-								{
-									if (type == "SLIDER")
-									{
-										while (myfile >> string)
-										{
-											if (string == this->m_text.getString())
-											{
-												std::streamoff pos = myfile.tellg();
-												std::fstream file("resources/gui.txt", std::ios::in | std::ios::out);
-												file.seekp(pos + 1);
-												file << '\n' << empty;
-												file.seekp(pos + 1);
-												file << '\n' << new_state;
-												file.close();
-											}
-										}
-									}
-								}
-							}
-							myfile.close();
 
 							(this->function)();
 						}
@@ -938,6 +786,8 @@ namespace GUI
 	//Image
 	Image::Image(const char* name, sf::Font& font)
 	{
+		this->m_type = "IMAGE";
+
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
 		{
@@ -950,7 +800,7 @@ namespace GUI
 
 			while (file >> type)
 			{
-				if (type == "IMAGE")
+				if (type == this->m_type)
 				{
 					while (file >> string)
 					{
@@ -1045,13 +895,13 @@ namespace GUI
 	Menu::~Menu()
 	{
 	}
-	const float Menu::getVersion()
+	const int Menu::getVersion()
 	{
 		std::fstream file("resources/gui.txt");
 		if (file.is_open())
 		{
 			std::string string = "";
-			float version = 0.f;
+			int version = 0;
 			while (file >> string)
 			{
 				if (string == "#VERSION")
@@ -1089,7 +939,31 @@ namespace GUI
 	{
 		for (std::size_t i = 0; i < this->widgets.size(); ++i)
 		{
+			*this->it[i] = this->widgets[i]->m_state;
+
 			this->widgets[i]->update(mousePos, event);
+
+			if (*this->it[i] != this->widgets[i]->m_state)
+			{
+				std::fstream myfile("resources/gui.txt", std::ios::out | std::ios::in | std::ios::trunc);
+				if (myfile.is_open())
+				{
+					myfile << "#VERSION " << this->getVersion() << '\n' << '\n';
+					for (std::size_t i = 0; i < this->widgets.size(); ++i)
+					{
+						std::string type = this->widgets[i]->m_type;
+						std::string string = this->widgets[i]->m_text.getString();
+						int state = this->widgets[i]->m_state;
+						sf::Vector2f size = this->widgets[i]->m_shape.getSize();
+						sf::Vector2f position = this->widgets[i]->m_shape.getPosition();
+						Color color = { this->widgets[i]->m_background.r, this->widgets[i]->m_background.g, this->widgets[i]->m_background.b, this->widgets[i]->m_background.a };
+						Color text_color = { this->widgets[i]->m_text.getFillColor().r, this->widgets[i]->m_text.getFillColor().g, this->widgets[i]->m_text.getFillColor().b, this->widgets[i]->m_text.getFillColor().a };
+
+						myfile << type << '\n' << string << '\n' << state << '\n' << size.x << " " << size.y << '\n' << position.x << " " << position.y << '\n' << color.r << " " << color.g << " " << color.b << " " << color.a << '\n' << text_color.r << " " << text_color.g << " " << text_color.b << " " << text_color.a << '\n' << '\n';
+					}
+				}
+				myfile.close();
+			}
 		}
 	}
 	void Menu::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -1102,21 +976,26 @@ namespace GUI
 	void Menu::CreateButton(const char* name, std::function<void()> func)
 	{
 		this->widgets.push_back(std::make_unique<Button>(name, func, this->m_font));
+		this->it.push_back(std::make_unique<int>(0));
 	}
 	void Menu::CreateToggle(const char* name, std::function<void()> func)
 	{
 		this->widgets.push_back(std::make_unique<Toggle>(name, func, this->m_font));
+		this->it.push_back(std::make_unique<int>(0));
 	}
 	void Menu::CreateSlider(const char* name, std::function<void()> func)
 	{
 		this->widgets.push_back(std::make_unique<Slider>(name, func, this->m_font));
+		this->it.push_back(std::make_unique<int>(0));
 	}
 	void Menu::CreateDropdown(const char* text, std::vector<std::string>& list, std::function<void()> func)
 	{
 		this->widgets.push_back(std::make_unique<Dropdown>(list, text, func, this->m_font));
+		this->it.push_back(std::make_unique<int>(0));
 	}
 	void Menu::CreateImage(const char* name)
 	{
 		this->widgets.push_back(std::make_unique<Image>(name, this->m_font));
+		this->it.push_back(std::make_unique<int>(0));
 	}
 }

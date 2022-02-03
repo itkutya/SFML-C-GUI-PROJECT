@@ -12,13 +12,14 @@ namespace GUI
 	public:
 		virtual void update(const sf::Vector2f& mousePos, sf::Event& event) = 0;
 
+		std::string m_type;
 		sf::RectangleShape m_shape;
 		sf::Color m_background;
 		sf::Text m_text;
-		bool m_pressed;
+		bool m_pressed = false;
 		std::function<void()> function;
 
-		int m_state;
+		int m_state = 0;
 
 		short int scrool = 0;
 	private:
@@ -100,10 +101,11 @@ namespace GUI
 		virtual ~Menu();
 
 		std::vector<std::unique_ptr<Widgets>> widgets;
+		std::vector<std::unique_ptr<int>> it;
 
 		void update(const sf::Vector2f& mousePos, sf::Event& event);
 
-		const float getVersion();
+		const int getVersion();
 
 		void CreateButton(const char* name, std::function<void()> func);
 		void CreateToggle(const char* name, std::function<void()> func);
